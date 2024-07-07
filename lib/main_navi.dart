@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:oneline/constrant/gaps.dart';
-import 'package:oneline/constrant/sizes.dart';
+import 'package:oneline/widgets/sidebar.dart';
+import 'package:go_router/go_router.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   static const routeURL = "/mainnavi";
@@ -21,6 +20,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
     setState(() {
       _selectedIndex = index;
     });
+    switch (index) {
+      case 0:
+        context.go('/calendar');
+        break;
+      case 1:
+        context.go('/serverList');
+        break;
+      case 2:
+        context.go('/workSchedule');
+        break;
+    }
   }
 
   late final AnimationController _animationController = AnimationController(
@@ -79,12 +89,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text('Rotate Sample'),
-              Gaps.h3,
+              const SizedBox(width: 3),
               RotationTransition(
                 turns: _animation,
                 child: const FaIcon(
                   FontAwesomeIcons.chevronDown,
-                  size: Sizes.size16,
+                  size: 16,
                 ),
               ),
             ],
@@ -93,110 +103,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
       ),
       body: Row(
         children: [
-          ConstrainedBox(
-            constraints:
-                BoxConstraints(minHeight: MediaQuery.of(context).size.height),
-            child: SingleChildScrollView(
-              child: IntrinsicHeight(
-                child: NavigationRail(
-                  selectedLabelTextStyle:
-                      const TextStyle(fontSize: Sizes.size24),
-                  minWidth: 80,
-                  elevation: 4,
-                  useIndicator: false,
-                  indicatorColor: Colors.teal.shade100,
-                  backgroundColor: Colors.grey.shade100,
-                  selectedIndex: _selectedIndex,
-                  onDestinationSelected: _onTap,
-                  destinations: const [
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.arrowTrendUp,
-                      ),
-                      label: Text('test'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.computer,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.heartPulse,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.bell,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.peopleGroup,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.chartSimple,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.timeline,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.bug,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.calendarDay,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.clockRotateLeft,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.eyeSlash,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.userGear,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.lock,
-                      ),
-                      label: Text('data'),
-                    ),
-                    NavigationRailDestination(
-                      icon: FaIcon(
-                        FontAwesomeIcons.fileShield,
-                      ),
-                      label: Text('data'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          SideNavigationBar(
+            selectedIndex: _selectedIndex,
+            onTap: _onTap,
           ),
           const VerticalDivider(
             thickness: 1,
@@ -209,25 +118,19 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                   Offstage(
                     offstage: _selectedIndex != 0,
                     child: Container(
-                      child: const Text('data1'),
+                      child: const Text('Calendar Screen'),
                     ),
                   ),
                   Offstage(
                     offstage: _selectedIndex != 1,
                     child: Container(
-                      child: const Text('data2'),
+                      child: const Text('Server List Screen'),
                     ),
                   ),
                   Offstage(
                     offstage: _selectedIndex != 2,
                     child: Container(
-                      child: const Text('data3'),
-                    ),
-                  ),
-                  Offstage(
-                    offstage: _selectedIndex != 3,
-                    child: Container(
-                      child: const Text('data4'),
+                      child: const Text('Work Schedule Screen'),
                     ),
                   ),
                   SlideTransition(
@@ -236,8 +139,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                       decoration: const BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(Sizes.size20),
-                          bottomRight: Radius.circular(Sizes.size20),
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
                         ),
                       ),
                       child: Column(
@@ -250,12 +153,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                                   FaIcon(
                                     tab["icon"],
                                     color: Colors.black,
-                                    size: Sizes.size16,
+                                    size: 16,
                                   ),
-                                  Gaps.h20,
-                                  Text(
-                                    tab["title"],
-                                  ),
+                                  const SizedBox(width: 20),
+                                  Text(tab["title"]),
                                 ],
                               ),
                             )
