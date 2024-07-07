@@ -9,18 +9,20 @@ final router = GoRouter(
       path: MainNavigationScreen.routeURL,
       name: MainNavigationScreen.routeName,
       builder: (context, state) => const MainNavigationScreen(),
+      routes: [
+        GoRoute(
+          path: 'calendar',
+          builder: (context, state) => const CalendarScreen(),
+        ),
+        // GoRoute(
+        //   path: '/serverList',
+        //   builder: (context, state) => ServerListScreen(),
+        // ),
+        // GoRoute(
+        //   path: '/workSchedule',
+        //   builder: (context, state) => WorkScheduleScreen(),
+        // ),
+      ],
     ),
-    GoRoute(
-      path: '/calendar',
-      builder: (context, state) => const CalendarScreen(),
-    ),
-    // GoRoute(
-    //   path: '/serverList',
-    //   builder: (context, state) => ServerListScreen(),
-    // ),
-    // GoRoute(
-    //   path: '/workSchedule',
-    //   builder: (context, state) => WorkScheduleScreen(),
-    // ),
   ],
 );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:oneline/calendar_screen.dart';
 import 'package:oneline/widgets/sidebar.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,24 +15,7 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = 0;
-
-  void _onTap(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    switch (index) {
-      case 0:
-        context.go('/calendar');
-        break;
-      case 1:
-        context.go('/serverList');
-        break;
-      case 2:
-        context.go('/workSchedule');
-        break;
-    }
-  }
+  int _selectedIndex = -1;
 
   late final AnimationController _animationController = AnimationController(
     vsync: this,
@@ -43,7 +27,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
     end: 0.5,
   ).animate(_animationController);
 
-  late final Animation<Offset> _panalAnimation = Tween(
+  late final Animation<Offset> _panelAnimation = Tween(
     begin: const Offset(0, -5),
     end: Offset.zero,
   ).animate(_animationController);
@@ -56,27 +40,33 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
     }
   }
 
+  void _onSideNavTap(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        context.go('/mainnavi/calendar');
+        break;
+      default:
+        context.go('/mainnavi');
+        break;
+    }
+  }
+
   final List<Map<String, dynamic>> _tabs = [
     {
-      "title": "All activity",
-      "icon": FontAwesomeIcons.solidMessage,
+      "title": "Calendar",
+      "icon": FontAwesomeIcons.calendarCheck,
     },
     {
-      "title": "All activity",
-      "icon": FontAwesomeIcons.solidMessage,
+      "title": "Server List",
+      "icon": FontAwesomeIcons.server,
     },
     {
-      "title": "All activity",
-      "icon": FontAwesomeIcons.solidMessage,
+      "title": "Work Schedule",
+      "icon": FontAwesomeIcons.solidCalendarCheck,
     },
-    {
-      "title": "All activity",
-      "icon": FontAwesomeIcons.solidMessage,
-    },
-    {
-      "title": "All activity",
-      "icon": FontAwesomeIcons.solidMessage,
-    }
   ];
 
   @override
@@ -88,7 +78,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Rotate Sample'),
+              const Text('Main Navigation'),
               const SizedBox(width: 3),
               RotationTransition(
                 turns: _animation,
@@ -105,67 +95,64 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
         children: [
           SideNavigationBar(
             selectedIndex: _selectedIndex,
-            onTap: _onTap,
+            onTap: _onSideNavTap,
           ),
           const VerticalDivider(
             thickness: 1,
             width: 1,
           ),
           Expanded(
-            child: Container(
-              child: Stack(
-                children: [
-                  Offstage(
-                    offstage: _selectedIndex != 0,
-                    child: Container(
-                      child: const Text('Calendar Screen'),
-                    ),
+            child: Stack(
+              children: [
+                Offstage(
+                  offstage: _selectedIndex != 0,
+                  child: const CalendarScreen(),
+                ),
+                Offstage(
+                  offstage: _selectedIndex != 1,
+                  child: Container(
+                    child: const Text('Server List Screen'),
                   ),
-                  Offstage(
-                    offstage: _selectedIndex != 1,
-                    child: Container(
-                      child: const Text('Server List Screen'),
-                    ),
+                ),
+                Offstage(
+                  offstage: _selectedIndex != 2,
+                  child: Container(
+                    child: const Text('Work Schedule Screen'),
                   ),
-                  Offstage(
-                    offstage: _selectedIndex != 2,
-                    child: Container(
-                      child: const Text('Work Schedule Screen'),
-                    ),
-                  ),
-                  SlideTransition(
-                    position: _panalAnimation,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20),
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          for (var tab in _tabs)
-                            ListTile(
-                              title: Row(
-                                children: [
-                                  FaIcon(
-                                    tab["icon"],
-                                    color: Colors.black,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(width: 20),
-                                  Text(tab["title"]),
-                                ],
-                              ),
-                            )
-                        ],
+                ),
+                SlideTransition(
+                  position: _panelAnimation,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
                       ),
                     ),
-                  )
-                ],
-              ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (var tab in _tabs)
+                          ListTile(
+                            title: Row(
+                              children: [
+                                FaIcon(
+                                  tab["icon"],
+                                  color: Colors.black,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 20),
+                                Text(tab["title"]),
+                              ],
+                            ),
+                            onTap: () => _onSideNavTap(_tabs.indexOf(tab)),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
