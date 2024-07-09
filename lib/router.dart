@@ -1,5 +1,8 @@
 import 'package:go_router/go_router.dart';
-import 'package:oneline/calendar_screen.dart';
+import 'package:oneline/screens/calendar_screen.dart';
+import 'package:oneline/screens/add_event_page.dart';
+import 'package:oneline/screens/todo_page.dart';
+import 'package:oneline/screens/schedule_page.dart';
 import 'package:oneline/main_navi.dart';
 
 final router = GoRouter(
@@ -14,14 +17,18 @@ final router = GoRouter(
           path: 'calendar',
           builder: (context, state) => const CalendarScreen(),
         ),
-        // GoRoute(
-        //   path: '/serverList',
-        //   builder: (context, state) => ServerListScreen(),
-        // ),
-        // GoRoute(
-        //   path: '/workSchedule',
-        //   builder: (context, state) => WorkScheduleScreen(),
-        // ),
+        GoRoute(
+          path: 'add-event',
+          builder: (context, state) => const AddEventPage(),
+        ),
+        GoRoute(
+          path: 'todo',
+          builder: (context, state) => const TodoPage(),
+        ),
+        GoRoute(
+          path: 'schedule',
+          builder: (context, state) => const SchedulePage(),
+        ),
       ],
     ),
   ],

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:oneline/calendar_screen.dart';
-import 'package:oneline/widgets/sidebar.dart';
+import 'package:oneline/models/tab_model.dart';
+import 'package:oneline/screens/calendar_screen.dart';
+import 'package:oneline/widgets/side_navigation_bar.dart';
 import 'package:go_router/go_router.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -15,7 +16,7 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = -1;
+  int _selectedIndex = 0;
 
   late final AnimationController _animationController = AnimationController(
     vsync: this,
@@ -54,23 +55,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
     }
   }
 
-  final List<Map<String, dynamic>> _tabs = [
-    {
-      "title": "Calendar",
-      "icon": FontAwesomeIcons.calendarCheck,
-    },
-    {
-      "title": "Server List",
-      "icon": FontAwesomeIcons.server,
-    },
-    {
-      "title": "Work Schedule",
-      "icon": FontAwesomeIcons.solidCalendarCheck,
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final GoRouterState goRouterState = GoRouterState.of(context);
+    final String location = goRouterState.location;
+
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
@@ -104,10 +93,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
           Expanded(
             child: Stack(
               children: [
-                Offstage(
-                  offstage: _selectedIndex != 0,
-                  child: const CalendarScreen(),
-                ),
+                if (location.contains('/mainnavi/calendar'))
+                  const CalendarScreen(),
+                if (!location.contains('/mainnavi/calendar'))
+                  Container(
+                    child: const Text('Main Screen'),
+                  ),
                 Offstage(
                   offstage: _selectedIndex != 1,
                   child: Container(
@@ -132,23 +123,24 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (var tab in _tabs)
-                          ListTile(
-                            title: Row(
-                              children: [
-                                FaIcon(
-                                  tab["icon"],
-                                  color: Colors.black,
-                                  size: 16,
-                                ),
-                                const SizedBox(width: 20),
-                                Text(tab["title"]),
-                              ],
-                            ),
-                            onTap: () => _onSideNavTap(_tabs.indexOf(tab)),
+                      children: tabs.asMap().entries.map((entry) {
+                        int idx = entry.key;
+                        TabModel tab = entry.value;
+                        return ListTile(
+                          title: Row(
+                            children: [
+                              FaIcon(
+                                tab.icon,
+                                color: Colors.black,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 20),
+                              Text(tab.title),
+                            ],
                           ),
-                      ],
+                          onTap: () => _onSideNavTap(idx),
+                        );
+                      }).toList(),
                     ),
                   ),
                 ),

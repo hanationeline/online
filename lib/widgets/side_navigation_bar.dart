@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:oneline/models/tab_model.dart';
 
 class SideNavigationBar extends StatelessWidget {
   final int selectedIndex;
@@ -25,24 +26,16 @@ class SideNavigationBar extends StatelessWidget {
             useIndicator: false,
             indicatorColor: Colors.teal.shade100,
             backgroundColor: Colors.grey.shade100,
-            selectedIndex: selectedIndex == -1 ? null : selectedIndex,
+            selectedIndex: selectedIndex,
             onDestinationSelected: (index) {
               onTap(index);
             },
-            destinations: const [
-              NavigationRailDestination(
-                icon: FaIcon(FontAwesomeIcons.calendarCheck),
-                label: Text('Calendar'),
-              ),
-              NavigationRailDestination(
-                icon: FaIcon(FontAwesomeIcons.server),
-                label: Text('Server List'),
-              ),
-              NavigationRailDestination(
-                icon: FaIcon(FontAwesomeIcons.solidCalendarCheck),
-                label: Text('Work Schedule'),
-              ),
-            ],
+            destinations: tabs.map((tab) {
+              return NavigationRailDestination(
+                icon: FaIcon(tab.icon),
+                label: Text(tab.title),
+              );
+            }).toList(),
           ),
         ),
       ),
