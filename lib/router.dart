@@ -4,6 +4,7 @@ import 'package:oneline/screens/add_event_page.dart';
 import 'package:oneline/screens/todo_page.dart';
 import 'package:oneline/screens/schedule_page.dart';
 import 'package:oneline/main_navi.dart';
+import 'package:oneline/screens/contact_list_screen.dart'; // 추가
 
 final router = GoRouter(
   initialLocation: "/mainnavi",
@@ -28,6 +29,10 @@ final router = GoRouter(
         GoRoute(
           path: 'schedule',
           builder: (context, state) => const SchedulePage(),
+        ),
+        GoRoute(
+          path: 'contact', // 연락처 경로 추가
+          builder: (context, state) => ContactListScreen(),
         ),
       ],
     ),

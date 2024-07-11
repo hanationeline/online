@@ -4,6 +4,7 @@ import 'package:oneline/models/tab_model.dart';
 import 'package:oneline/screens/calendar_screen.dart';
 import 'package:oneline/widgets/side_navigation_bar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oneline/screens/contact_list_screen.dart'; // 추가
 
 class MainNavigationScreen extends StatefulWidget {
   static const routeURL = "/mainnavi";
@@ -48,6 +49,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
     switch (index) {
       case 0:
         context.go('/mainnavi/calendar');
+        break;
+      case 3: // 연락처
+        context.go('/mainnavi/contact');
         break;
       default:
         context.go('/mainnavi');
@@ -95,7 +99,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
               children: [
                 if (location.contains('/mainnavi/calendar'))
                   const CalendarScreen(),
-                if (!location.contains('/mainnavi/calendar'))
+                if (location.contains('/mainnavi/contact')) // 연락처
+                  ContactListScreen(),
+                if (!location.contains('/mainnavi/calendar') &&
+                    !location.contains('/mainnavi/contact'))
                   Container(
                     child: const Text('Main Screen'),
                   ),
