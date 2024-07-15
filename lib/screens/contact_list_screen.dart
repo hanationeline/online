@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:oneline/models/contact_model.dart';
 import 'package:oneline/screens/add_contact_page.dart';
+import 'package:oneline/screens/contact_detail_page.dart'; // 추가
 
 class ContactListScreen extends StatelessWidget {
   final List<Contact> contacts = [
     // 샘플 연락처 데이터
-    Contact(
-        name: 'John Doe', phone: '123-456-7890', email: 'john.doe@example.com'),
-    Contact(
-        name: 'Jane Smith',
-        phone: '987-654-3210',
-        email: 'jane.smith@example.com'),
+    Contact(name: '김재영', phone: '010-1234-5678', email: 'abc123@google.com'),
+    Contact(name: '박준하', phone: '010-2345-6789', email: 'abc456@google.com'),
+    Contact(name: '김관중', phone: '010-3456-7890', email: 'abc789@google.com'),
   ];
+
+  ContactListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,12 @@ class ContactListScreen extends StatelessWidget {
             title: Text(contact.name),
             subtitle: Text(contact.phone),
             onTap: () {
-              // 연락처 세부 정보 페이지로 이동하도록 구현할 수 있습니다.
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ContactDetailPage(contact: contact),
+                ),
+              );
             },
           );
         },
