@@ -31,6 +31,16 @@ class ContactDetailPage extends StatelessWidget {
               'Email: ${contact.email}',
               style: const TextStyle(fontSize: 18),
             ),
+            const SizedBox(height: 16),
+            Text(
+              'Workplace: ${contact.workplace}', // 20240716_김재영 : 연락처 내 직장정보 추가
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Notes: ${contact.notes}', // 20240716_김재영 : 연락처 내 메모 추가
+              style: const TextStyle(fontSize: 18),
+            ),
           ],
         ),
       ),

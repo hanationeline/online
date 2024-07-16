@@ -6,7 +6,7 @@ import 'package:oneline/screens/todo_page.dart';
 import 'package:oneline/screens/schedule_page.dart';
 import 'package:oneline/main_navi.dart';
 import 'package:oneline/screens/contact_list_screen.dart';
-import 'package:oneline/screens/contact_detail_page.dart'; // 추가
+import 'package:oneline/screens/contact_detail_page.dart';
 
 final router = GoRouter(
   initialLocation: "/mainnavi",

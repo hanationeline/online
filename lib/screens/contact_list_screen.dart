@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:oneline/models/contact_model.dart';
 import 'package:oneline/screens/add_contact_page.dart';
-import 'package:oneline/screens/contact_detail_page.dart'; // 추가
+import 'package:oneline/screens/contact_detail_page.dart';
+import 'package:provider/provider.dart';
+import 'package:oneline/models/contact_provider.dart';
 
 class ContactListScreen extends StatelessWidget {
-  final List<Contact> contacts = [
-    // 샘플 연락처 데이터
-    Contact(name: '김재영', phone: '010-1234-5678', email: 'abc123@google.com'),
-    Contact(name: '박준하', phone: '010-2345-6789', email: 'abc456@google.com'),
-    Contact(name: '김관중', phone: '010-3456-7890', email: 'abc789@google.com'),
-  ];
-
-  ContactListScreen({super.key});
+  const ContactListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,23 +14,46 @@ class ContactListScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Contacts'),
       ),
-      body: ListView.builder(
-        itemCount: contacts.length,
-        itemBuilder: (context, index) {
-          final contact = contacts[index];
-          return ListTile(
-            title: Text(contact.name),
-            subtitle: Text(contact.phone),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ContactDetailPage(contact: contact),
-                ),
-              );
-            },
-          );
-        },
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: const InputDecoration(
+                labelText: 'Search',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (query) {},
+            ),
+          ),
+          Expanded(
+            child: Consumer<ContactProvider>(
+              builder: (context, contactProvider, child) {
+                final contacts = contactProvider.contacts;
+                return ListView.builder(
+                  itemCount: contacts.length,
+                  itemBuilder: (context, index) {
+                    final contact = contacts[index];
+                    return ListTile(
+                      title: Text(contact.name),
+                      subtitle: Text(contact.phone),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ContactDetailPage(contact: contact),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
