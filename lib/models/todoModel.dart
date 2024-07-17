@@ -1,5 +1,3 @@
-import 'package:equatable/equatable.dart';
-
 class Todo extends Equatable {
   final int id;
   final String todo;
