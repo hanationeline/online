@@ -1,7 +1,7 @@
 /*일 별 시간대별로 보는 페이지 > 지금 사용 x */
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:oneline/models/event_provider.dart';
+import 'package:oneline/provider/event_provider.dart';
 
 void main() {
   runApp(const MyApp());

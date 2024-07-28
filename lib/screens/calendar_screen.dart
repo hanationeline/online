@@ -3,7 +3,7 @@ import 'package:intl/intl.dart'; // 날짜 나타날 때 쓰는 패키지 추가
 import 'package:oneline/screens/add_event_page.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:provider/provider.dart';
-import 'package:oneline/models/event_provider.dart';
+import 'package:oneline/provider/event_provider.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -133,6 +133,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           ),
                           subtitle: Text(
                             '${event.startTime.hour}:${event.startTime.minute.toString().padLeft(2, '0')} - ${event.endTime.hour}:${event.endTime.minute.toString().padLeft(2, '0')}',
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              eventProvider.removeEvent(event);
+                            },
                           ),
                         ),
                       ),
