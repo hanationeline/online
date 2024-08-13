@@ -16,9 +16,9 @@ class EoslProvider with ChangeNotifier {
     if (eoslJsonData.isNotEmpty) {
       final List<dynamic> eoslList = jsonDecode(eoslJsonData);
       for (var eosl in eoslList) {
-        final tempHostname = EoslModel.fromJson(eosl);
-        print('호스트네임은: ${eosl.tempHostname}');
-        eoslInstances.add(EoslModel.fromJson(eosl));
+        final eoslModel = EoslModel.fromJson(eosl);
+        print('호스트네임은: ${eoslModel.hostName}');
+        eoslInstances.add(eoslModel);
       }
 
       return eoslInstances;

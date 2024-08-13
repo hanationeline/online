@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oneline/models/eosl_model.dart';
 import 'package:oneline/models/eosl_provider.dart';
 import 'package:oneline/widgets/animated_search_bar.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -16,17 +17,34 @@ class _EoslListPageState extends State<EoslListPage> {
   bool isFolded = true;
   String searchTerm = '';
   List<PlutoRow> rows = [];
+  late PlutoGridStateManager stateManager;
 
   @override
   void initState() {
+    super.initState();
+    print('EoslListPage initstate 호출');
     loadEoslData();
   }
 
   void loadEoslData() async {
-    await context.read<EoslProvider>().getEoslList();
-    setState(() {
-      rows = createRows();
-    });
+    try {
+      print("loadEoslData 호출됨");
+      final eoslProvider = context.read<EoslProvider>();
+      final eoslList = await eoslProvider.getEoslList();
+      print("데이터 로드 성공: ${eoslList.length}개의 EOSL 항목");
+
+      final Map<String, EoslModel> eoslMap = {
+        for (var eosl in eoslList) eosl.eoslNo: eosl
+      };
+
+      setState(() {
+        eoslProvider.eoslList.addAll(eoslMap);
+        rows = createRows();
+        print("rows 생성 완료: ${rows.length}개의 행 생성");
+      });
+    } catch (e) {
+      print("데이터 로드 중 오류 발생: $e");
+    }
   }
 
   @override
@@ -53,7 +71,7 @@ class _EoslListPageState extends State<EoslListPage> {
                     onSearch: (String searchTerm) {
                       setState(() {
                         searchTerm = searchTerm;
-                        rows = createRows(); // TODO: plutogrid row 생성
+                        rows = createRows();
                         highlightSearchResult(); // TODO: highlight 메소드 모듈화
                       });
                     },
@@ -69,12 +87,27 @@ class _EoslListPageState extends State<EoslListPage> {
                     padding: const EdgeInsets.all(16),
                     child: PlutoGrid(
                       columns: createColumns(), rows: rows,
-                      // onLoaded: (PlutoGridOnLoadedEvent(event){
-                      //   stateManager = event.stateManager;
-                      // },
                       // onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event){
                       //   // TODO: 더블클릭 시
                       // }
+                      configuration: const PlutoGridConfiguration(
+                        style: PlutoGridStyleConfig(
+                          activatedColor: Colors.tealAccent,
+                          gridBorderColor: Colors.teal,
+                          gridBackgroundColor: Colors.white,
+                          columnTextStyle: TextStyle(
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          cellTextStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                          ),
+                        ),
+                        columnSize: PlutoGridColumnSizeConfig(
+                          autoSizeMode: PlutoAutoSizeMode.scale,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -130,6 +163,7 @@ class _EoslListPageState extends State<EoslListPage> {
   }
 
   List<PlutoRow> createRows() {
+    print("createRows 메소드 호출 완료");
     final eoslProvider = context.read<EoslProvider>();
     return eoslProvider.getAllEoslList.values.map((server) {
       return PlutoRow(
@@ -140,8 +174,12 @@ class _EoslListPageState extends State<EoslListPage> {
           'ip': PlutoCell(value: server.ipAddress),
           'platform': PlutoCell(value: server.platform),
           'os_version': PlutoCell(value: server.osVersion),
+          // 'eosl_date': PlutoCell(
+          // value: server.eoslDate.toIso8601String().split('T').first),
           'eosl_date': PlutoCell(
-              value: server.eoslDate.toIso8601String().split('T').first),
+              value: server.eoslDate != null
+                  ? server.eoslDate!.toIso8601String().split('T').first
+                  : ''), // null 처리
         },
       );
     }).toList();
