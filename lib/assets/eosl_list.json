@@ -1,0 +1,11 @@
+[
+    {
+        "eosl_no": "1",
+        "host_name": "hfgapp01",
+        "business_name": "문서보안",
+        "ip_address": "10.140.100.105",
+        "platform": "Linux",
+        "os_version": "8.8",
+        "eosl_date": "2025-12-31"
+    }
+]

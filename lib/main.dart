@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:oneline/models/eosl_provider.dart';
 import 'package:oneline/router.dart';
 import 'package:provider/provider.dart';
 import 'package:oneline/models/event_provider.dart';
 import 'package:oneline/models/contact_provider.dart';
+import 'package:oneline/models/server_provider.dart'; // 추가
 
 void main() {
   runApp(const MyApp());
@@ -16,9 +18,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => EventProvider()),
-        ChangeNotifierProvider(
-            create: (context) =>
-                ContactProvider()), // 20240716_김재영 : ContactProvider 추가
+        ChangeNotifierProvider(create: (context) => ContactProvider()),
+        ChangeNotifierProvider(create: (context) => ServerProvider()),
+        ChangeNotifierProvider(create: (context) => EoslProvider()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

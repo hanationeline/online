@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:oneline/models/tab_model.dart';
 import 'package:oneline/screens/calendar_screen.dart';
+import 'package:oneline/screens/eosl_list_page.dart';
 import 'package:oneline/screens/server_list.dart';
 import 'package:oneline/widgets/side_navigation_bar.dart';
 import 'package:go_router/go_router.dart';
@@ -54,6 +55,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
       case 1: // 서버 리스트
         context.go('/mainnavi/server_list');
         break;
+      case 2: // eosl 리스트
+        context.go('/mainnavi/eosl_list');
+        break;
       case 3: // 연락처
         context.go('/mainnavi/contact');
         break;
@@ -103,12 +107,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
               children: [
                 if (location.contains('/mainnavi/calendar'))
                   const CalendarScreen(),
-                if (location.contains('/mainnavi/contact')) ContactListScreen(),
+                if (location.contains('/mainnavi/contact'))
+                  const ContactListScreen(),
                 if (location.contains('/mainnavi/server_list'))
                   const ServerList(),
+                if (location.contains('/mainnavi/eosl_list'))
+                  const EoslListPage(),
                 if (!location.contains('/mainnavi/calendar') &&
                     !location.contains('/mainnavi/contact') &&
-                    !location.contains('/mainnavi/server_list'))
+                    !location.contains('/mainnavi/server_list') &&
+                    !location.contains('/mainnavi/eosl_list'))
                   Container(
                     child: const Text('Main Screen'),
                   ),

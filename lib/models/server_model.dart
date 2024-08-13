@@ -1,64 +1,51 @@
+import 'dart:convert';
+
 class ServerModel {
-  final String? serviceGroupName;
-  final String? networkConnection;
-  final String? environment;
-  final String? department;
-  final String? serverType;
-  final String? osType;
-  final String? hostName;
-  final String? serviceName;
-  final String? ip;
-  final String? adminAccount;
-  final String? osVersion;
-  final DateTime? eoslDate;
+  final String serverNo;
+  final String serviceGroupName;
+  final String networkConnection;
+  final String environment;
+  final String department;
+  final String serverType;
+  final String osType;
+  final String hostName;
+  final String serviceName;
+  final String ip;
+  final String adminAccount;
+  final String osVersion;
+  final DateTime eoslDate;
 
   ServerModel({
-    this.serviceGroupName,
-    this.networkConnection,
-    this.environment,
-    this.department,
-    this.serverType,
-    this.osType,
-    this.hostName,
-    this.serviceName,
-    this.ip,
-    this.adminAccount,
-    this.osVersion,
-    this.eoslDate,
+    required this.serverNo,
+    required this.serviceGroupName,
+    required this.networkConnection,
+    required this.environment,
+    required this.department,
+    required this.serverType,
+    required this.osType,
+    required this.hostName,
+    required this.serviceName,
+    required this.ip,
+    required this.adminAccount,
+    required this.osVersion,
+    required this.eoslDate,
   });
 
-  factory ServerModel.fromMap(Map<String, dynamic> map) {
+  factory ServerModel.fromJson(Map<String, dynamic> json) {
     return ServerModel(
-      serviceGroupName: map['service_group_name'],
-      networkConnection: map['network_connection'],
-      environment: map['environment'],
-      department: map['department'],
-      serverType: map['server_type'],
-      osType: map['os_type'],
-      hostName: map['host_name'],
-      serviceName: map['service_name'],
-      ip: map['ip'],
-      adminAccount: map['admin_account'],
-      osVersion: map['os_version'],
-      eoslDate:
-          map['eosl_date'] != null ? DateTime.parse(map['eosl_date']) : null,
+      serverNo: json['server_no'] ?? '',
+      serviceGroupName: json['service_group_name'] ?? '',
+      networkConnection: json['network_connection'] ?? '',
+      environment: json['environment'] ?? '',
+      department: json['department'] ?? '',
+      serverType: json['server_type'] ?? '',
+      osType: json['os_type'] ?? '',
+      hostName: json['host_name'] ?? '',
+      serviceName: json['service_name'] ?? '',
+      ip: json['ip'] ?? '',
+      adminAccount: json['admin_account'] ?? '',
+      osVersion: json['os_version'] ?? '',
+      eoslDate: DateTime.tryParse(json['eosl_date'] ?? '') ?? DateTime.now(),
     );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'service_group_name': serviceGroupName,
-      'network_connection': networkConnection,
-      'environment': environment,
-      'department': department,
-      'server_type': serverType,
-      'os_type': osType,
-      'host_name': hostName,
-      'service_name': serviceName,
-      'ip': ip,
-      'admin_account': adminAccount,
-      'os_version': osVersion,
-      'eosl_date': eoslDate?.toIso8601String(),
-    };
   }
 }
