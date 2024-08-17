@@ -22,26 +22,33 @@ class _EoslListPageState extends State<EoslListPage> {
   @override
   void initState() {
     super.initState();
-    print('EoslListPage initstate 호출');
-    loadEoslData();
+    // print('EoslListPage initstate 호출');
+    loadEoslDataIfNeeded();
   }
 
-  void loadEoslData() async {
+  void loadEoslDataIfNeeded() async {
     try {
-      print("loadEoslData 호출됨");
+      // print("loadEoslData 호출됨");
       final eoslProvider = context.read<EoslProvider>();
-      final eoslList = await eoslProvider.getEoslList();
-      print("데이터 로드 성공: ${eoslList.length}개의 EOSL 항목");
 
-      final Map<String, EoslModel> eoslMap = {
-        for (var eosl in eoslList) eosl.eoslNo: eosl
-      };
+      if (eoslProvider.getAllEoslList.isEmpty) {
+        final eoslList = await eoslProvider.getEoslList();
+        print("데이터 로드 성공: ${eoslList.length}개의 EOSL 항목");
+        final Map<String, EoslModel> eoslMap = {
+          for (var eosl in eoslList) eosl.eoslNo: eosl
+        };
 
-      setState(() {
-        eoslProvider.eoslList.addAll(eoslMap);
-        rows = createRows();
-        print("rows 생성 완료: ${rows.length}개의 행 생성");
-      });
+        setState(() {
+          eoslProvider.eoslList.clear();
+          eoslProvider.eoslList.addAll(eoslMap);
+          rows = createRows();
+          print("rows 생성 완료: ${rows.length}개의 행 생성");
+        });
+      } else {
+        setState(() {
+          rows = createRows();
+        });
+      }
     } catch (e) {
       print("데이터 로드 중 오류 발생: $e");
     }
@@ -72,7 +79,8 @@ class _EoslListPageState extends State<EoslListPage> {
                       setState(() {
                         searchTerm = searchTerm;
                         rows = createRows();
-                        highlightSearchResult(); // TODO: highlight 메소드 모듈화
+                        stateManager.notifyListeners();
+                        // highlightSearchResult(); // TODO: highlight 메소드 모듈화
                       });
                     },
                     onFoldChange: () {
@@ -80,13 +88,33 @@ class _EoslListPageState extends State<EoslListPage> {
                         isFolded = !isFolded;
                       });
                     },
+                    // rows: rows,
+                    // stateManager: stateManager,
+                    // searchTerm: searchTerm,
                   ),
                 ),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     child: PlutoGrid(
-                      columns: createColumns(), rows: rows,
+                      columns: createColumns(),
+                      rows: rows,
+                      onLoaded: (PlutoGridOnLoadedEvent event) {
+                        stateManager = event.stateManager;
+                        final rows = stateManager.rows;
+                        if (rows.isEmpty) {
+                          print("PlutoGrid 내부 행이 없습니다.");
+                        } else {
+                          for (var row in rows) {
+                            print("PlutoGrid 행 데이터: ${row.cells}");
+                            row.cells.forEach((key, cell) {
+                              print('  셀: 키 = $key, 값 = ${cell.value}');
+                            });
+                          }
+                        }
+                        print(
+                            '===================================================');
+                      },
                       // onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event){
                       //   // TODO: 더블클릭 시
                       // }
@@ -121,7 +149,7 @@ class _EoslListPageState extends State<EoslListPage> {
   List<PlutoColumn> createColumns() {
     return [
       PlutoColumn(
-        title: '1',
+        title: '번호',
         field: 'eosl_no',
         type: PlutoColumnType.text(),
       ),
@@ -165,15 +193,29 @@ class _EoslListPageState extends State<EoslListPage> {
   List<PlutoRow> createRows() {
     print("createRows 메소드 호출 완료");
     final eoslProvider = context.read<EoslProvider>();
+    final allEoslList = eoslProvider.getAllEoslList;
+
+    print("eoslProvider.getAllEoslList에 ${allEoslList.length}개의 항목 있음");
+
     return eoslProvider.getAllEoslList.values.map((server) {
+      // print('생성되는 행 데이터:');
+      // print('server_no: ${server.eoslNo}');
+      // print('host_name: ${server.hostName}');
+      // print('business_name: ${server.businessName}');
+      // print('ip: ${server.ipAddress}');
+      // print('platform: ${server.platform}');
+      // print('os_version: ${server.osVersion}');
+      // print(
+      //     'eosl_date: ${server.eoslDate!.toIso8601String().split('T').first}');
+
       return PlutoRow(
         cells: {
-          'server_no': PlutoCell(value: server.eoslNo),
-          'host_name': PlutoCell(value: server.hostName),
-          'business_name': PlutoCell(value: server.businessName),
-          'ip': PlutoCell(value: server.ipAddress),
-          'platform': PlutoCell(value: server.platform),
-          'os_version': PlutoCell(value: server.osVersion),
+          'eosl_no': PlutoCell(value: server.eoslNo ?? ''),
+          'host_name': PlutoCell(value: server.hostName ?? ''),
+          'business_name': PlutoCell(value: server.businessName ?? ''),
+          'ip_address': PlutoCell(value: server.ipAddress ?? ''),
+          'platform': PlutoCell(value: server.platform ?? ''),
+          'os_version': PlutoCell(value: server.osVersion ?? ''),
           // 'eosl_date': PlutoCell(
           // value: server.eoslDate.toIso8601String().split('T').first),
           'eosl_date': PlutoCell(

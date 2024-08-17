@@ -70,4 +70,5 @@ class AnimatedSearchBar extends StatelessWidget {
       ),
     );
   }
+
 }

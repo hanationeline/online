@@ -19,17 +19,23 @@ class _ServerListState extends State<ServerList> {
   bool _folded = true;
   String _searchTerm = '';
   List<PlutoRow> _rows = [];
-  late PlutoGridStateManager _stateManager;
-  PlutoRowColorCallback? _rowColorCallback;
+  late PlutoGridStateManager stateManager;
+  PlutoRowColorCallback? rowColorCallback;
 
   @override
   void initState() {
     super.initState();
-    _loadServerData();
+    _loadServerDataIfNeeded();
   }
 
-  void _loadServerData() async {
-    await context.read<ServerProvider>().fetchServers();
+  void _loadServerDataIfNeeded() async {
+    final serverProvider = context.read<ServerProvider>();
+
+    // 데이터가 없으면 fetchServers 호출
+    if (serverProvider.allServers.isEmpty) {
+      await serverProvider.fetchServers();
+    }
+
     setState(() {
       _rows = _createRows();
     });
@@ -56,7 +62,7 @@ class _ServerListState extends State<ServerList> {
                       setState(() {
                         _searchTerm = searchTerm;
                         _rows = _createRows();
-                        _highlightSearchResult();
+                        highlightSearchResult();
                       });
                     },
                     onFoldChange: () {
@@ -64,6 +70,9 @@ class _ServerListState extends State<ServerList> {
                         _folded = !_folded;
                       });
                     },
+                    // rows: _rows,
+                    // stateManager: stateManager,
+                    // searchTerm: _searchTerm,
                   ),
                 ),
                 Expanded(
@@ -73,7 +82,7 @@ class _ServerListState extends State<ServerList> {
                       columns: _createColumns(),
                       rows: _rows,
                       onLoaded: (PlutoGridOnLoadedEvent event) {
-                        _stateManager = event.stateManager;
+                        stateManager = event.stateManager;
                       },
                       onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
                         final row = event.row;
@@ -112,8 +121,8 @@ class _ServerListState extends State<ServerList> {
   }
 
   // 검색 하이라이트 기능
-  void _highlightSearchResult() {
-    final matchingRows = _stateManager.rows.where((row) {
+  void highlightSearchResult() {
+    final matchingRows = stateManager.rows.where((row) {
       return row.cells.entries.any((entry) {
         return entry.value.value
             .toString()
@@ -124,20 +133,20 @@ class _ServerListState extends State<ServerList> {
 
     if (matchingRows.isNotEmpty) {
       setState(() {
-        _rowColorCallback = (PlutoRowColorContext rowColorContext) {
+        rowColorCallback = (PlutoRowColorContext rowColorContext) {
           if (matchingRows.contains(rowColorContext.row)) {
             return const Color.fromARGB(255, 198, 235, 14); // 검색된 행의 색상 변경
           }
           return const Color.fromARGB(194, 246, 4, 4);
         };
 
-        _stateManager.setCurrentCell(
+        stateManager.setCurrentCell(
           matchingRows.first.cells.entries.first.value,
-          _stateManager.refRows.indexOf(matchingRows.first),
+          stateManager.refRows.indexOf(matchingRows.first),
         );
-        _stateManager.moveScrollByRow(
+        stateManager.moveScrollByRow(
           PlutoMoveDirection.up,
-          _stateManager.refRows.indexOf(matchingRows.first),
+          stateManager.refRows.indexOf(matchingRows.first),
         );
       });
     }
@@ -180,7 +189,7 @@ class _ServerListState extends State<ServerList> {
   List<PlutoColumn> _createColumns() {
     return [
       PlutoColumn(
-        title: '1',
+        title: '서버번호',
         field: 'server_no',
         type: PlutoColumnType.text(),
       ),
