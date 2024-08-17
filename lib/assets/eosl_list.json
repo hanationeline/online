@@ -7,5 +7,41 @@
         "platform": "Linux",
         "os_version": "8.8",
         "eosl_date": "2025-12-31"
+    },
+    {
+        "eosl_no": "2",
+        "host_name": "websrv02",
+        "business_name": "전자상거래",
+        "ip_address": "10.140.100.106",
+        "platform": "Windows",
+        "os_version": "2016",
+        "eosl_date": "2023-08-15"
+    },
+    {
+        "eosl_no": "3",
+        "host_name": "dbsrv01",
+        "business_name": "고객관리",
+        "ip_address": "10.140.100.107",
+        "platform": "Linux",
+        "os_version": "7.9",
+        "eosl_date": "2024-11-30"
+    },
+    {
+        "eosl_no": "4",
+        "host_name": "mailapp03",
+        "business_name": "메일 서비스",
+        "ip_address": "10.140.100.108",
+        "platform": "Linux",
+        "os_version": "7.7",
+        "eosl_date": "2026-05-01"
+    },
+    {
+        "eosl_no": "5",
+        "host_name": "fileshare01",
+        "business_name": "파일공유",
+        "ip_address": "10.140.100.109",
+        "platform": "Windows",
+        "os_version": "2012 R2",
+        "eosl_date": "2022-10-10"
     }
 ]

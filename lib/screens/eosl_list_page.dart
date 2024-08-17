@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:oneline/models/eosl_model.dart';
 import 'package:oneline/models/eosl_provider.dart';
 import 'package:oneline/widgets/animated_search_bar.dart';
@@ -33,14 +34,14 @@ class _EoslListPageState extends State<EoslListPage> {
 
       if (eoslProvider.getAllEoslList.isEmpty) {
         final eoslList = await eoslProvider.getEoslList();
-        print("데이터 로드 성공: ${eoslList.length}개의 EOSL 항목");
+        print("Eosl_List_Page: 데이터 로드 성공: ${eoslList.length}개의 EOSL 항목");
         final Map<String, EoslModel> eoslMap = {
           for (var eosl in eoslList) eosl.eoslNo: eosl
         };
 
         setState(() {
-          eoslProvider.eoslList.clear();
-          eoslProvider.eoslList.addAll(eoslMap);
+          eoslProvider.eoslMap.clear();
+          eoslProvider.eoslMap.addAll(eoslMap);
           rows = createRows();
           print("rows 생성 완료: ${rows.length}개의 행 생성");
         });
@@ -88,9 +89,6 @@ class _EoslListPageState extends State<EoslListPage> {
                         isFolded = !isFolded;
                       });
                     },
-                    // rows: rows,
-                    // stateManager: stateManager,
-                    // searchTerm: searchTerm,
                   ),
                 ),
                 Expanded(
@@ -106,18 +104,25 @@ class _EoslListPageState extends State<EoslListPage> {
                           print("PlutoGrid 내부 행이 없습니다.");
                         } else {
                           for (var row in rows) {
-                            print("PlutoGrid 행 데이터: ${row.cells}");
+                            // print("PlutoGrid 행 데이터: ${row.cells}");
                             row.cells.forEach((key, cell) {
-                              print('  셀: 키 = $key, 값 = ${cell.value}');
+                              // print('Eosl_List_Page  셀: 키 = $key, 값 = ${cell.value}');
                             });
                           }
                         }
                         print(
                             '===================================================');
                       },
-                      // onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event){
-                      //   // TODO: 더블클릭 시
-                      // }
+                      onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
+                        final row = event.row;
+                        final eoslNo = row.cells['eosl_no']?.value ?? '';
+                        final eoslModel = eoslProvider.getEoslByNo(eoslNo);
+                        if (eoslModel != null) {
+                          context.go(
+                              '/mainnavi/eosl_list/eosl_detail/${eoslModel.hostName}',
+                              extra: eoslModel);
+                        }
+                      },
                       configuration: const PlutoGridConfiguration(
                         style: PlutoGridStyleConfig(
                           activatedColor: Colors.tealAccent,

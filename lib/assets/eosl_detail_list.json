@@ -1,0 +1,42 @@
+[
+    {
+        "host_name": "hfgapp01",
+        "field": "어플리케이션 서버",
+        "quantity": "2",
+        "note": "주요 문서 처리 시스템",
+        "supplier": "LG CNS",
+        "eosl_date": "2025-12-31"
+    },
+    {
+        "host_name": "websrv02",
+        "field": "웹 서버",
+        "quantity": "3",
+        "note": "전자상거래 트랜잭션 처리",
+        "supplier": "삼성 SDS",
+        "eosl_date": "2023-08-15"
+    },
+    {
+        "host_name": "dbsrv01",
+        "field": "데이터베이스 서버",
+        "quantity": "1",
+        "note": "고객 데이터 관리",
+        "supplier": "SK C&C",
+        "eosl_date": "2024-11-30"
+    },
+    {
+        "host_name": "mailapp03",
+        "field": "메일 어플리케이션 서버",
+        "quantity": "2",
+        "note": "사내 메일 관리",
+        "supplier": "KT",
+        "eosl_date": "2026-05-01"
+    },
+    {
+        "host_name": "fileshare01",
+        "field": "파일 공유 서버",
+        "quantity": "4",
+        "note": "대용량 파일 공유",
+        "supplier": "LG U+",
+        "eosl_date": "2022-10-10"
+    }
+]

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oneline/models/server_model.dart';
 import 'package:intl/intl.dart';
-import 'package:oneline/screens/server_history.dart';
 import 'package:oneline/widgets/server_info_widget.dart';
 import 'package:oneline/widgets/task_card.dart';
 import 'package:oneline/models/server_provider.dart';

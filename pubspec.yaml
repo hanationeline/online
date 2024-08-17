@@ -77,6 +77,7 @@ flutter:
   assets:
     - lib/assets/servers.json
     - lib/assets/eosl_list.json
+    - lib/assets/eosl_detail_list.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
