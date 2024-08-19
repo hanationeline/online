@@ -37,11 +37,12 @@ class EoslProvider with ChangeNotifier {
 
   // hostName으로 EOSL 조회
   EoslModel? getEoslByHostName(String hostName) {
-    final eoslModel = eoslMap[hostName];
+    final eoslModel = eoslMap[hostName.trim().toLowerCase()];
+    print('호스트네임 저장: ${eoslModel?.hostName.trim().toLowerCase()}');
 
     print('EoslProvider 호스트네임 조회: ${eoslMap[hostName]}');
     // 로그 추가: 현재 저장된 hostNames 확인
-    print('EoslProvider: 현재 저장된 호스트네임들: ${eoslMap.keys}');
+    print('EoslProvider - 현재 저장된 호스트네임들: ${eoslMap.keys}');
 
     return eoslModel;
   }
@@ -61,7 +62,7 @@ class EoslProvider with ChangeNotifier {
 
         // 로그 추가: 상세 정보 로드 확인
         print(
-            'EoslProvider: 로드된 EoslDetailModel 호스트네임: ${eoslDetailModel.hostName}');
+            'EoslProvider - 로드된 EoslDetailModel 호스트네임: ${eoslDetailModel.hostName}');
 
         // hostName을 키로 사용하여 eoslDetailList에 저장
         eoslDetailList[eoslDetailModel.hostName] = eoslDetailModel;
@@ -74,7 +75,7 @@ class EoslProvider with ChangeNotifier {
 
   // hostName으로 EOSL 상세 정보 조회
   EoslDetailModel? getEoslDetailByHostName(String hostName) {
-    final eoslDetailModel = eoslDetailList[hostName];
+    final eoslDetailModel = eoslDetailList[hostName.trim().toLowerCase()];
 
     // 로그 추가: 현재 저장된 상세 정보 hostNames 확인
     print('EoslProvider: 현재 저장된 상세 호스트네임들: ${eoslDetailList.keys}');

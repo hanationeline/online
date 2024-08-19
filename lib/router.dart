@@ -62,16 +62,14 @@ final router = GoRouter(
               path: 'server_detail/:serverNo',
               builder: (context, state) {
                 final serverNo = state.params['serverNo']!;
-                final serverProvider = context.read<ServerProvider>();
-                final server = serverProvider.getServerByNo(serverNo);
 
-                if (server == null) {
-                  return const Scaffold(
-                    body: Center(child: Text('Server not found')),
-                  );
-                }
+                // if (server == null) {
+                //   return const Scaffold(
+                //     body: Center(child: Text('Server not found')),
+                //   );
+                // }
 
-                return ServerDetailPage(server: server, serverNo: serverNo);
+                return ServerDetailPage(serverNo: serverNo);
               },
               routes: [
                 GoRoute(
@@ -131,11 +129,11 @@ final router = GoRouter(
                       '라우터 Error: EoslDetailModel 호스트네임 ${eoslDetailModel?.hostName} not found');
                 }
 
-                if (eoslDetailModel == null) {
-                  return const Scaffold(
-                    body: Center(child: Text('Server not found')),
-                  );
-                }
+                // if (eoslDetailModel == null) {
+                //   return const Scaffold(
+                //     body: Center(child: Text('Server not found')),
+                //   );
+                // }
 
                 return EoslDetailPage(hostName: hostName);
               },
