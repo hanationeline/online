@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // 날짜 나타날 때 쓰는 패키지 추가
 import 'package:oneline/screens/add_event_page.dart';
+import 'package:oneline/screens/event_detail_page.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:provider/provider.dart';
 import 'package:oneline/provider/event_provider.dart';
@@ -143,6 +144,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               eventProvider.removeEvent(event);
                             },
                           ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EventDetailPage(event: event),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     );
