@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:oneline/models/eosl_detail_model.dart'; // EoslDetailModel을 추가한 파일
+import 'package:go_router/go_router.dart'; // go_router 패키지를 사용해 페이지 간 이동 처리
 
 class EoslInfoWidget extends StatelessWidget {
   final EoslDetailModel eoslDetailModel;
@@ -38,22 +39,20 @@ class EoslInfoWidget extends StatelessWidget {
           _buildInfoRow('구분:', eoslDetailModel.field),
           _buildInfoRow('상세:', eoslDetailModel.note),
           _buildInfoRow('수량:', eoslDetailModel.quantity),
-          _buildInfoRow('납품업체:', eoslDetailModel.supplier),
-          _buildInfoRow(
-            'EOS 날짜:',
-            eoslDetailModel.eoslDate != null
-                ? DateFormat('yyyy-MM-dd').format(eoslDetailModel.eoslDate!)
-                : '없음',
-          ),
+          _buildSupplierRow(context, '납품업체:', eoslDetailModel.supplier),
+          _buildEosDateRow(context),
         ],
       ),
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  // 납품업체를 클릭 시 eoslMaintenance 페이지로 이동하는 Row
+  Widget _buildSupplierRow(
+      BuildContext context, String label, String supplier) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             label,
@@ -62,11 +61,92 @@ class EoslInfoWidget extends StatelessWidget {
               color: Color.fromARGB(197, 0, 121, 107),
             ),
           ),
+          const SizedBox(width: 8), // key와 value 사이 간격 추가
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                context.go('/eoslMaintenance'); // eoslMaintenance 페이지로 이동
+              },
+              child: Text(
+                supplier,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue, // 클릭 가능한 스타일
+                  decoration: TextDecoration.underline,
+                ),
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.left,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // EOS 날짜 등록 버튼이 포함된 Row
+  Widget _buildEosDateRow(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            'EOS 날짜:',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(197, 0, 121, 107),
+            ),
+          ),
+          const SizedBox(width: 8), // key와 value 사이 간격 추가
+          Expanded(
+            child: Text(
+              eoslDetailModel.eoslDate != null
+                  ? DateFormat('yyyy-MM-dd').format(eoslDetailModel.eoslDate!)
+                  : '없음',
+              style: const TextStyle(fontSize: 16),
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.left,
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // EOS 날짜 등록 로직
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.teal.shade600,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text('EOS 날짜 등록'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 일반 정보 표시 Row
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(197, 0, 121, 107),
+            ),
+          ),
+          const SizedBox(width: 8), // key와 value 사이 간격 추가
           Expanded(
             child: Text(
               value,
               style: const TextStyle(fontSize: 16),
               overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.left, // 텍스트 왼쪽 정렬
             ),
           ),
         ],

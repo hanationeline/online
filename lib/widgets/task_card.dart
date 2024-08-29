@@ -64,6 +64,7 @@ class TaskCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'Date: ${DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: taskIndex)))}',
+                    // 'Date: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                 ],

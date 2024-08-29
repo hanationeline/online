@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 
-class AnimatedSearchBar extends StatelessWidget {
-  final bool folded;
+class AnimatedSearchBar extends StatefulWidget {
   final Function(String) onSearch;
-  final Function onFoldChange;
 
   const AnimatedSearchBar({
     super.key,
-    required this.folded,
     required this.onSearch,
-    required this.onFoldChange,
   });
+
+  @override
+  _AnimatedSearchBarState createState() => _AnimatedSearchBarState();
+}
+
+class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
+  bool folded = true;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 300),
       width: folded ? 56 : 270,
       height: 56,
       decoration: BoxDecoration(
@@ -36,7 +39,7 @@ class AnimatedSearchBar extends StatelessWidget {
                         border: InputBorder.none,
                       ),
                       onChanged: (value) {
-                        onSearch(value);
+                        widget.onSearch(value);
                       },
                     )
                   : null,
@@ -61,7 +64,9 @@ class AnimatedSearchBar extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  onFoldChange();
+                  setState(() {
+                    folded = !folded;
+                  });
                 },
               ),
             ),
@@ -70,5 +75,4 @@ class AnimatedSearchBar extends StatelessWidget {
       ),
     );
   }
-
 }

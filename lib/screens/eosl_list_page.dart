@@ -75,7 +75,7 @@ class _EoslListPageState extends State<EoslListPage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: AnimatedSearchBar(
-                    folded: isFolded,
+                    // folded: isFolded,
                     onSearch: (String searchTerm) {
                       setState(() {
                         searchTerm = searchTerm;
@@ -84,11 +84,11 @@ class _EoslListPageState extends State<EoslListPage> {
                         // highlightSearchResult(); // TODO: highlight 메소드 모듈화
                       });
                     },
-                    onFoldChange: () {
-                      setState(() {
-                        isFolded = !isFolded;
-                      });
-                    },
+                    // onFoldChange: () {
+                    //   setState(() {
+                    //     isFolded = !isFolded;
+                    //   });
+                    // },
                   ),
                 ),
                 Expanded(

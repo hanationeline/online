@@ -38,11 +38,12 @@ class EoslProvider with ChangeNotifier {
   // hostName으로 EOSL 조회
   EoslModel? getEoslByHostName(String hostName) {
     final eoslModel = eoslMap[hostName.trim().toLowerCase()];
-    print('호스트네임 저장: ${eoslModel?.hostName.trim().toLowerCase()}');
+    print(
+        'EoslProvider: 호스트네임 저장: ${eoslModel?.hostName.trim().toLowerCase()}');
 
-    print('EoslProvider 호스트네임 조회: ${eoslMap[hostName]}');
+    print('EoslProvider: 호스트네임 조회: ${eoslMap[hostName]}');
     // 로그 추가: 현재 저장된 hostNames 확인
-    print('EoslProvider - 현재 저장된 호스트네임들: ${eoslMap.keys}');
+    print('EoslProvider: - 현재 저장된 호스트네임들: ${eoslMap.keys}');
 
     return eoslModel;
   }

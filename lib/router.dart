@@ -6,6 +6,7 @@ import 'package:oneline/models/server_provider.dart';
 import 'package:oneline/screens/calendar_screen.dart';
 import 'package:oneline/screens/add_event_page.dart';
 import 'package:oneline/screens/eosl_detail.dart';
+import 'package:oneline/screens/eosl_history.dart';
 import 'package:oneline/screens/eosl_list_page.dart';
 import 'package:oneline/screens/server_detail.dart';
 import 'package:oneline/screens/server_history.dart';
@@ -105,39 +106,59 @@ final router = GoRouter(
           builder: (context, state) => const EoslListPage(),
           routes: [
             GoRoute(
-              path: 'eosl_detail/:hostName',
-              builder: (context, state) {
-                final hostName = state.params['hostName']!;
-                final eoslProvider = context.read<EoslProvider>();
+                path: 'eosl_detail/:hostName',
+                builder: (context, state) {
+                  final hostName = state.params['hostName']!;
+                  final eoslProvider = context.read<EoslProvider>();
 
-                // 로그 추가: hostName 확인
-                print('넘어온 hostName: $hostName');
+                  // 로그 추가: hostName 확인
+                  print('넘어온 hostName: $hostName');
 
-                final eoslModel = eoslProvider.getEoslByHostName(hostName);
-                final eoslDetailModel =
-                    eoslProvider.getEoslDetailByHostName(hostName);
+                  final eoslModel = eoslProvider.getEoslByHostName(hostName);
+                  final eoslDetailModel =
+                      eoslProvider.getEoslDetailByHostName(hostName);
 
-                // 로그 추가: 모델이 있는지 확인
-                if (eoslModel == null) {
+                  // 로그 추가: 모델이 있는지 확인
+                  if (eoslModel == null) {
+                    print(
+                        '라우터 Error: EoslModel 호스트네임 ${eoslModel?.hostName} not found');
+                  }
                   print(
-                      '라우터 Error: EoslModel 호스트네임 ${eoslModel?.hostName} not found');
-                }
-                print(
-                    '라우터 로드: EoslModel 호스트네임 ${eoslModel?.hostName} not found');
-                if (eoslDetailModel == null) {
-                  print(
-                      '라우터 Error: EoslDetailModel 호스트네임 ${eoslDetailModel?.hostName} not found');
-                }
+                      '라우터 로드: EoslModel 호스트네임 ${eoslModel?.hostName} not found');
+                  if (eoslDetailModel == null) {
+                    print(
+                        '라우터 Error: EoslDetailModel 호스트네임 ${eoslDetailModel?.hostName} not found');
+                  }
 
-                // if (eoslDetailModel == null) {
-                //   return const Scaffold(
-                //     body: Center(child: Text('Server not found')),
-                //   );
-                // }
+                  // if (eoslDetailModel == null) {
+                  //   return const Scaffold(
+                  //     body: Center(child: Text('Server not found')),
+                  //   );
+                  // }
 
-                return EoslDetailPage(hostName: hostName);
-              },
-            ),
+                  return EoslDetailPage(hostName: hostName);
+                },
+                // eosl_history page로 이동
+                routes: [
+                  GoRoute(
+                      path: 'history',
+                      builder: (context, state) {
+                        final hostName = state.params['hostName']!;
+                        final taskIndex =
+                            int.parse(state.queryParams['taskIndex']!);
+                        final eoslProvider = context.read<EoslProvider>();
+                        final eoslModel =
+                            eoslProvider.getEoslByHostName(hostName);
+
+                        if (eoslModel == null) {
+                          print(
+                              "라우터 Error: EoslModel 호스트네임 ${eoslModel?.hostName} not found");
+                        }
+
+                        return EoslHistoryPage(
+                            hostName: hostName, taskIndex: taskIndex);
+                      })
+                ]),
           ],
         )
       ],

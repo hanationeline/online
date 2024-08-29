@@ -16,7 +16,7 @@ class ServerList extends StatefulWidget {
 }
 
 class _ServerListState extends State<ServerList> {
-  bool _folded = true;
+  final bool _folded = true;
   String _searchTerm = '';
   List<PlutoRow> _rows = [];
   late PlutoGridStateManager stateManager;
@@ -57,7 +57,7 @@ class _ServerListState extends State<ServerList> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: AnimatedSearchBar(
-                    folded: _folded,
+                    // folded: _folded,
                     onSearch: (String searchTerm) {
                       setState(() {
                         _searchTerm = searchTerm;
@@ -65,11 +65,11 @@ class _ServerListState extends State<ServerList> {
                         highlightSearchResult();
                       });
                     },
-                    onFoldChange: () {
-                      setState(() {
-                        _folded = !_folded;
-                      });
-                    },
+                    // onFoldChange: () {
+                    //   setState(() {
+                    //     _folded = !_folded;
+                    //   });
+                    // },
                     // rows: _rows,
                     // stateManager: stateManager,
                     // searchTerm: _searchTerm,
