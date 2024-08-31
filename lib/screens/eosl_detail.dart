@@ -5,11 +5,11 @@ import 'package:oneline/models/eosl_model.dart';
 import 'package:oneline/models/eosl_detail_model.dart';
 import 'package:oneline/models/eosl_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:oneline/widgets/animated_search_bar.dart';
 import 'package:oneline/widgets/eosl_info_widget.dart';
 import 'package:oneline/widgets/items_per_page.dart';
 import 'package:oneline/widgets/task_card.dart';
 import 'package:oneline/widgets/date_range_selector.dart';
+import 'package:oneline/widgets/search_bar.dart';
 
 class EoslDetailPage extends StatefulWidget {
   final String hostName;
@@ -128,7 +128,7 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
               const SizedBox(height: 16),
 
               Center(
-                child: AnimatedSearchBar(
+                child: CustomSearchBar(
                   onSearch: _searchTasks,
                 ),
               ),

@@ -15,6 +15,7 @@ class DateRangeSelector extends StatefulWidget {
   _DateRangeSelectorState createState() => _DateRangeSelectorState();
 }
 
+// DateRangeSelector 수정
 class _DateRangeSelectorState extends State<DateRangeSelector> {
   DateTimeRange? selectedDateRange;
 
@@ -24,94 +25,41 @@ class _DateRangeSelectorState extends State<DateRangeSelector> {
     selectedDateRange = widget.initialDateRange;
   }
 
-  void _selectStartDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  void _selectDateRange(BuildContext context) async {
+    final picked = await showDateRangePicker(
       context: context,
-      initialDate: selectedDateRange?.start ?? DateTime.now(),
+      initialDateRange: selectedDateRange,
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
     if (picked != null) {
       setState(() {
-        selectedDateRange = DateTimeRange(
-          start: picked,
-          end: selectedDateRange?.end ?? picked,
-        );
+        selectedDateRange = picked;
       });
-    }
-  }
-
-  void _selectEndDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDateRange?.end ?? DateTime.now(),
-      firstDate: selectedDateRange?.start ?? DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      setState(() {
-        selectedDateRange = DateTimeRange(
-          start: selectedDateRange?.start ?? picked,
-          end: picked,
-        );
-      });
+      widget.onSearch(picked); // 선택된 날짜 범위로 필터링 수행
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // 시작 날짜 선택 필드
-        Expanded(
-          child: GestureDetector(
-            onTap: () => _selectStartDate(context),
-            child: Row(
-              children: [
-                const Icon(Icons.calendar_today, size: 24),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextFormField(
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      hintText: selectedDateRange?.start != null
-                          ? DateFormat('yyyy-MM-dd')
-                              .format(selectedDateRange!.start)
-                          : '시작 날짜',
-                    ),
-                  ),
-                ),
-              ],
+    return GestureDetector(
+      onTap: () => _selectDateRange(context),
+      child: Row(
+        children: [
+          const Icon(Icons.calendar_today, size: 24),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextFormField(
+              readOnly: true,
+              decoration: InputDecoration(
+                hintText: selectedDateRange != null
+                    ? '${DateFormat('yyyy-MM-dd').format(selectedDateRange!.start)} - ${DateFormat('yyyy-MM-dd').format(selectedDateRange!.end)}'
+                    : '날짜 범위 선택',
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 8),
-        // 끝 날짜 선택 필드
-        Expanded(
-          child: GestureDetector(
-            onTap: () => _selectEndDate(context),
-            child: Row(
-              children: [
-                const Icon(Icons.calendar_today, size: 24),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextFormField(
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      hintText: selectedDateRange?.end != null
-                          ? DateFormat('yyyy-MM-dd')
-                              .format(selectedDateRange!.end)
-                          : '종료 날짜',
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-
-      ],
+        ],
+      ),
     );
   }
 }

@@ -14,6 +14,7 @@ class AnimatedSearchBar extends StatefulWidget {
 
 class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
   bool folded = true;
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,18 +32,25 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
           Expanded(
             child: Container(
               padding: const EdgeInsets.only(left: 20),
-              child: !folded
-                  ? TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'Search',
-                        hintStyle: TextStyle(color: Colors.blue),
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (value) {
-                        widget.onSearch(value);
-                      },
-                    )
-                  : null,
+              child: TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: TextStyle(color: Colors.blue),
+                  border: InputBorder.none,
+                ),
+                onChanged: (value) {
+                  widget.onSearch(value);
+                },
+                onTap: () {
+                  // TextField에 포커스가 주어지면 펼쳐짐
+                  if (folded) {
+                    setState(() {
+                      folded = false;
+                    });
+                  }
+                },
+              ),
             ),
           ),
           AnimatedContainer(
@@ -65,6 +73,11 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
                 ),
                 onTap: () {
                   setState(() {
+                    if (!folded) {
+                      // 검색 바를 닫을 때만 텍스트 필드를 초기화
+                      _controller.clear();
+                      widget.onSearch('');
+                    }
                     folded = !folded;
                   });
                 },

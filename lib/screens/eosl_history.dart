@@ -108,40 +108,59 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // EoslDetailModel과 Contact를 한 row에 나란히 배치
-                  Row(
-                    children: [
-                      // 왼쪽: EoslDetailModel 정보
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.all(8),
-                          decoration: _boxDecoration(),
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildEoslDetailTile(context, eoslDetail),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // 오른쪽: Contact 정보
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.all(8),
-                          decoration: _boxDecoration(),
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildContactTile(
-                                  context, contact ?? tempContact),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                  // Row 위젯 안의 내용 수정
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        // 원하는 높이를 지정, 예를 들어 300으로 제한
+                        const double maxHeight = 200; // 최대 높이 설정
+
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 왼쪽: EoslDetailModel 정보
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.all(8),
+                                decoration: _boxDecoration(),
+                                padding: const EdgeInsets.all(16),
+                                constraints: const BoxConstraints(
+                                  minHeight: maxHeight,
+                                  maxHeight: maxHeight,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildEoslDetailTile(context, eoslDetail),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            // 오른쪽: Contact 정보
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.all(8),
+                                decoration: _boxDecoration(),
+                                padding: const EdgeInsets.all(16),
+                                constraints: const BoxConstraints(
+                                  minHeight: maxHeight,
+                                  maxHeight: maxHeight,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildContactTile(
+                                        context, contact ?? tempContact),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
-                  const SizedBox(height: 16),
+
                   // 작업 정보 작성 섹션
                   _buildTaskInformationSection(),
                   const SizedBox(height: 16),
@@ -228,7 +247,7 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
   Widget _buildTaskInformationSection() {
     return Container(
       width: double.infinity,
-      height: 300, // 높이 증가
+      height: 400, // 높이 증가
       padding: const EdgeInsets.all(16),
       decoration: _boxDecoration(),
       child: SingleChildScrollView(
@@ -316,9 +335,9 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
           ...attachedFiles.map(
             (file) => ListTile(
               leading: const Icon(Icons.insert_drive_file),
-              title: Text('파일명: ${file.name}'), // 파일명 표시
+              title: Text('파일명: ${file.name ?? '알 수 없음'}'), // 파일명이 null인지 확인
               subtitle: Text(
-                  '용량: ${(file.size / 1024).toStringAsFixed(2)} KB'), // 파일 크기 표시
+                  '용량: ${(file.size != null ? (file.size / 1024).toStringAsFixed(2) : '0.00')} KB'), // 파일 크기가 null인지 확인
               trailing: IconButton(
                 icon: const Icon(Icons.delete),
                 onPressed: () =>
