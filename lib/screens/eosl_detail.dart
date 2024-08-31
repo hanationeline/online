@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:oneline/models/eosl_model.dart';
-import 'package:oneline/models/eosl_detail_model.dart'; // EoslDetailModel을 추가한 파일
+import 'package:oneline/models/eosl_detail_model.dart';
 import 'package:oneline/models/eosl_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:oneline/widgets/animated_search_bar.dart';
 import 'package:oneline/widgets/eosl_info_widget.dart';
 import 'package:oneline/widgets/items_per_page.dart';
-import 'package:provider/provider.dart';
 import 'package:oneline/widgets/task_card.dart';
 import 'package:oneline/widgets/date_range_selector.dart';
 
@@ -31,7 +31,6 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
     end: DateTime.now().add(const Duration(days: 7)),
   ); // 기본 기간 설정 (현재 날짜부터 한달 전까지)
   String searchQuery = ""; // 검색할 텍스트
-  bool isSearchFolded = true; // 검색바 상태
 
   Future<void> _loadData() async {
     final eoslProvider = context.read<EoslProvider>();
@@ -39,6 +38,13 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
     // 데이터 로드
     await eoslProvider.getEoslList();
     await eoslProvider.getEoslDetailList();
+    await eoslProvider.getEoslMaintenanceList(); // 유지보수 이력 로드
+
+    // 데이터 로드 후, 디버깅 로그로 확인
+    print('EoslDetailPage: 데이터 로드 완료');
+    print('호스트네임: ${widget.hostName}');
+    print('Eosl 목록: ${eoslProvider.getAllEoslList.keys}');
+    print('Eosl 상세 목록: ${eoslProvider.getAllDetailEoslList.keys}');
   }
 
   void _filterTasks(DateTimeRange range) {
@@ -55,11 +61,21 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
     });
   }
 
-  // void _toggleSearchBar() {
-  //   setState(() {
-  //     isSearchFolded = !isSearchFolded;
-  //   });
-  // }
+  void _addTask() async {
+    final eoslProvider = context.read<EoslProvider>();
+
+    // 유지보수 이력 리스트 로드
+    final maintenanceList = await eoslProvider.getEoslMaintenanceList();
+
+    // 새로운 eosl_maintenance_no 생성 (기존 리스트의 길이 + 1)
+    final newMaintenanceNo =
+        (maintenanceList.length + 1).toString().padLeft(3, '0');
+
+    // EoslHistory 페이지로 이동하여 새로운 Task 추가
+    context.go(
+      '/mainnavi/eosl_list/eosl_detail/${widget.hostName}/history?taskIndex=$newMaintenanceNo',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,18 +93,23 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
             return const Center(child: Text('데이터 로드 중 오류가 발생했습니다.'));
           }
 
-          final eoslProvider = context.read<EoslProvider>();
-          final eoslModel = eoslProvider.getEoslByHostName(widget.hostName);
+          final eoslProvider = context.watch<EoslProvider>();
+          final hostNameKey = widget.hostName.trim().toLowerCase();
+          final eoslModel = eoslProvider.getEoslByHostName(hostNameKey);
           final eoslDetailModel =
-              eoslProvider.getEoslDetailByHostName(widget.hostName);
+              eoslProvider.getEoslDetailByHostName(hostNameKey);
+          final eoslMaintenance =
+              eoslProvider.getEoslMaintenanceByHostName(hostNameKey);
 
-          if (eoslModel == null || eoslDetailModel == null) {
+          if (eoslModel == null ||
+              eoslDetailModel == null ||
+              eoslMaintenance == null) {
             return const Center(child: Text('해당 호스트 정보를 찾을 수 없습니다.'));
           }
 
           // 필터링된 TaskCard만 보이도록 설정
-          final filteredTasks =
-              _getFilteredTasks(selectedDateRange, searchQuery);
+          final filteredTasks = _getFilteredTasks(
+              selectedDateRange, searchQuery, eoslMaintenance.tasks);
 
           // 페이지 수 계산
           final totalPages =
@@ -105,40 +126,10 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
             children: [
               EoslInfoWidget(eoslDetailModel: eoslDetailModel),
               const SizedBox(height: 16),
-              // Center(
-              //   child: SizedBox(
-              //     width: MediaQuery.of(context).size.width * 0.5, // 화면의 1/3 크기
-              //     child: Row(
-              //       children: [
-              //         Expanded(
-              //           child: TextField(
-              //             decoration: InputDecoration(
-              //               prefixIcon: const Icon(Icons.search),
-              //               labelText: "검색",
-              //               hintText: "Task 제목 또는 설명 검색",
-              //               border: OutlineInputBorder(
-              //                 borderRadius: BorderRadius.circular(12),
-              //               ),
-              //             ),
-              //             onSubmitted: _searchTasks,
-              //           ),
-              //         ),
-              //         const SizedBox(width: 8),
-              //         ElevatedButton(
-              //           onPressed: () {
-              //             _searchTasks(searchQuery); // 검색 버튼 클릭 시 검색 수행
-              //           },
-              //           child: const Text("검색"),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
+
               Center(
                 child: AnimatedSearchBar(
-                  // folded: isSearchFolded,
                   onSearch: _searchTasks,
-                  // onFoldChange: _toggleSearchBar,
                 ),
               ),
               const SizedBox(height: 18),
@@ -147,21 +138,7 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
                 child: Container(
                   padding: const EdgeInsets.all(9),
                   decoration: BoxDecoration(
-                    // border: Border.all(),
-                    // gradient: LinearGradient(
-                    //   colors: [Colors.teal.shade100, Colors.teal.shade300],
-                    //   begin: Alignment.topLeft,
-                    //   end: Alignment.bottomRight,
-                    // ),
                     borderRadius: BorderRadius.circular(16),
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //     color: Colors.teal.withOpacity(0.3),
-                    //     spreadRadius: 2,
-                    //     blurRadius: 8,
-                    //     offset: const Offset(0, 4),
-                    //   ),
-                    // ],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -211,16 +188,32 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
                       childAspectRatio:
                           (MediaQuery.of(context).size.width / 3 - 20) / 300,
                     ),
-                    // itemCount: 10, // 유지보수 이력 개수
-                    // itemCount: filteredTasks.length,
-                    itemCount: visibleTasks.length,
+                    itemCount:
+                        visibleTasks.length + 1, // 유지보수 이력 개수 + 1 (플러스 버튼)
                     itemBuilder: (context, index) {
+                      if (index == 0) {
+                        // 첫 번째 카드에 새로운 Task 추가 버튼 배치
+                        return GestureDetector(
+                          onTap: _addTask,
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16)),
+                            color: Colors.teal.shade50,
+                            child: const Center(
+                              child:
+                                  Icon(Icons.add, size: 50, color: Colors.teal),
+                            ),
+                          ),
+                        );
+                      }
+
+                      final task = visibleTasks[index - 1];
                       return TaskCard(
-                        taskIndex: visibleTasks[index],
+                        task: task, // TaskCard에 task 데이터 전달
                         onTap: () {
                           // 작업 상세보기 로직
                           context.go(
-                            '/mainnavi/eosl_list/eosl_detail/${widget.hostName}/history?taskIndex=$index',
+                            '/mainnavi/eosl_list/eosl_detail/${widget.hostName}/history?taskIndex=${index - 1}',
                           );
                         },
                       );
@@ -267,44 +260,20 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Text(
-            '$label:',
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(value, overflow: TextOverflow.ellipsis),
-          ),
-        ],
-      ),
-    );
-  }
-
   // 선택된 날짜 범위와 검색어에 맞는 TaskCard 필터링
-  List<int> _getFilteredTasks(DateTimeRange range, String query) {
-    // 필터링 로직 (예시 데이터를 사용하여 taskIndex와 텍스트로 필터링)
-    final tasks = List.generate(10, (index) {
-      final taskDate = DateTime.now().add(Duration(days: index)); // 예시 데이터
-      final taskTitle = 'Task Title #$index'.toLowerCase(); // 예시 데이터, 소문자로 변환
-      final taskDescription =
-          'Task Description #$index'.toLowerCase(); // 예시 데이터, 소문자로 변환
+  List<Map<String, dynamic>> _getFilteredTasks(
+      DateTimeRange range, String query, List<Map<String, dynamic>> tasks) {
+    return tasks.where((task) {
+      final taskDate =
+          task['date'] != null ? DateTime.tryParse(task['date']) : null;
+      final taskContent = task['content']?.toLowerCase() ?? '';
+      final taskNotes = task['notes']?.toLowerCase() ?? '';
 
       // 날짜 필터링 및 검색어 필터링 적용
-      if (taskDate.isAfter(range.start) &&
-          taskDate.isBefore(range.end) &&
-          (taskTitle.contains(query.toLowerCase()) ||
-              taskDescription.contains(query.toLowerCase()))) {
-        return index;
-      } else {
-        return -1; // 필터링 조건에 맞지 않으면 -1로 표시
-      }
-    }).where((index) => index != -1).toList();
-
-    return tasks;
+      return (taskDate == null ||
+              (taskDate.isAfter(range.start) &&
+                  taskDate.isBefore(range.end))) &&
+          (taskContent.contains(query) || taskNotes.contains(query));
+    }).toList();
   }
 }

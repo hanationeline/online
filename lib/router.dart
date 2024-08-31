@@ -55,51 +55,51 @@ final router = GoRouter(
             ),
           ],
         ),
-        GoRoute(
-          path: 'server_list',
-          builder: (context, state) => const ServerList(),
-          routes: [
-            GoRoute(
-              path: 'server_detail/:serverNo',
-              builder: (context, state) {
-                final serverNo = state.params['serverNo']!;
+        // GoRoute(
+        //   path: 'server_list',
+        //   builder: (context, state) => const ServerList(),
+        //   routes: [
+        //     GoRoute(
+        //       path: 'server_detail/:serverNo',
+        //       builder: (context, state) {
+        //         final serverNo = state.params['serverNo']!;
 
-                // if (server == null) {
-                //   return const Scaffold(
-                //     body: Center(child: Text('Server not found')),
-                //   );
-                // }
+        //         // if (server == null) {
+        //         //   return const Scaffold(
+        //         //     body: Center(child: Text('Server not found')),
+        //         //   );
+        //         // }
 
-                return ServerDetailPage(serverNo: serverNo);
-              },
-              routes: [
-                GoRoute(
-                  path: 'history',
-                  builder: (context, state) {
-                    final serverNo = state.params['serverNo']!;
-                    final serverProvider = context.read<ServerProvider>();
-                    final server = serverProvider.getServerByNo(serverNo);
+        //         return ServerDetailPage(serverNo: serverNo);
+        //       },
+        //       routes: [
+        //         GoRoute(
+        //           path: 'history',
+        //           builder: (context, state) {
+        //             final serverNo = state.params['serverNo']!;
+        //             final serverProvider = context.read<ServerProvider>();
+        //             final server = serverProvider.getServerByNo(serverNo);
 
-                    if (server == null) {
-                      return const Scaffold(
-                        body: Center(
-                          child: Text('Server not found'),
-                        ),
-                      );
-                    }
+        //             if (server == null) {
+        //               return const Scaffold(
+        //                 body: Center(
+        //                   child: Text('Server not found'),
+        //                 ),
+        //               );
+        //             }
 
-                    final taskIndex = state.queryParams['taskIndex'] != null
-                        ? int.parse(state.queryParams['taskIndex']!)
-                        : 0;
+        //             final taskIndex = state.queryParams['taskIndex'] != null
+        //                 ? int.parse(state.queryParams['taskIndex']!)
+        //                 : 0;
 
-                    return ServerHistoryPage(
-                        server: server, taskIndex: taskIndex);
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
+        //             return ServerHistoryPage(
+        //                 server: server, taskIndex: taskIndex);
+        //           },
+        //         ),
+        //       ],
+        //     ),
+        //   ],
+        // ),
         // eosl 리스트 페이지 라우팅
         GoRoute(
           path: 'eosl_list',

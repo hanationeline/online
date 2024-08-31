@@ -50,6 +50,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   table_calendar: ^3.0.0
   pluto_grid: ^8.0.0
+  file_picker: ^8.0.7
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +79,7 @@ flutter:
     - lib/assets/servers.json
     - lib/assets/eosl_list.json
     - lib/assets/eosl_detail_list.json
+    - lib/assets/eosl_maintenance_list.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oneline/models/eosl_detail_model.dart';
+import 'package:oneline/models/eosl_maintenance_model.dart';
 import 'package:oneline/models/eosl_model.dart';
 
 class EoslProvider with ChangeNotifier {
   final Map<String, EoslModel> eoslMap = {};
   final Map<String, EoslDetailModel> eoslDetailList = {};
   final List<EoslModel> eoslInstances = [];
+  final Map<String, EoslMaintenance> eoslMaintenanceList = {}; // 유지보수 이력 맵
 
   Future<List<EoslModel>> getEoslList() async {
     final eoslJsonData =
@@ -86,4 +88,68 @@ class EoslProvider with ChangeNotifier {
 
   // 모든 EOSL리스트 반환
   Map<String, EoslDetailModel> get getAllDetailEoslList => eoslDetailList;
+
+  // // 유지보수 이력 리스트 로드
+  // Future<void> getEoslMaintenanceList() async {
+  //   final eoslMaintenanceJsonData = await rootBundle
+  //       .loadString('lib/assets/eosl_maintenance_list.json'); // 유지보수 이력 데이터 파일
+  //   if (eoslMaintenanceJsonData.isNotEmpty) {
+  //     final List<dynamic> eoslMaintenanceDataList =
+  //         jsonDecode(eoslMaintenanceJsonData);
+  //     for (var maintenance in eoslMaintenanceDataList) {
+  //       final eoslMaintenanceModel = EoslMaintenance.fromJson(maintenance);
+  //       eoslMaintenanceList[eoslMaintenanceModel.hostName] =
+  //           eoslMaintenanceModel;
+  //     }
+  //     notifyListeners();
+  //   } else {
+  //     throw Error();
+  //   }
+
+  // 유지보수 이력 리스트 로드
+  Future<List<EoslMaintenance>> getEoslMaintenanceList() async {
+    final eoslMaintenanceJsonData =
+        await rootBundle.loadString('lib/assets/eosl_maintenance_list.json');
+    final List<EoslMaintenance> maintenanceData = [];
+
+    if (eoslMaintenanceJsonData.isNotEmpty) {
+      final List<dynamic> eoslMaintenanceDataList =
+          jsonDecode(eoslMaintenanceJsonData);
+      for (var maintenance in eoslMaintenanceDataList) {
+        final eoslMaintenanceModel = EoslMaintenance.fromJson(maintenance);
+        eoslMaintenanceList[eoslMaintenanceModel.hostName.toLowerCase()] =
+            eoslMaintenanceModel;
+        maintenanceData.add(eoslMaintenanceModel); // 리스트에 추가
+      }
+      notifyListeners();
+    } else {
+      throw Error();
+    }
+    return maintenanceData;
+  }
+
+  // hostName으로 EOSL 유지보수 이력 조회
+  EoslMaintenance? getEoslMaintenanceByHostName(String hostName) {
+    final maintenanceModel = eoslMaintenanceList[hostName.trim().toLowerCase()];
+    return maintenanceModel;
+  }
+
+  // 유지보수 이력 추가 메서드
+  void addTaskToDetail(String hostName, Map<String, String> task) {
+    // 유지보수 데이터가 존재하는지 확인
+    final maintenance = eoslMaintenanceList[hostName.trim().toLowerCase()];
+    if (maintenance != null) {
+      // 유지보수 이력이 존재하는 경우 Task 추가
+      maintenance.tasks.add(task);
+      notifyListeners(); // 데이터 변경 알림
+    } else {
+      // 유지보수 이력이 존재하지 않으면 새로 생성
+      eoslMaintenanceList[hostName.trim().toLowerCase()] = EoslMaintenance(
+        maintenanceNo: 'new_maintenance_no',
+        hostName: hostName,
+        tasks: [task],
+      );
+      notifyListeners(); // 데이터 변경 알림
+    }
+  }
 }
