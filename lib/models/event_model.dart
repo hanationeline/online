@@ -1,4 +1,5 @@
 class Event {
+  final int id;
   final String title;
   final String description;
   final DateTime startTime;
@@ -6,6 +7,7 @@ class Event {
   final String type;
 
   Event({
+    required this.id,
     required this.title,
     required this.description,
     required this.startTime,
@@ -16,6 +18,7 @@ class Event {
   // Map 형식으로 변환하는 메서드
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'title': title,
       'description': description,
       'startTime': startTime.toIso8601String(),
@@ -27,6 +30,7 @@ class Event {
   // Map에서 Event 객체로 변환하는 팩토리 메서드
   factory Event.fromMap(Map<String, dynamic> map) {
     return Event(
+      id: map['id'],
       title: map['title'],
       description: map['description'],
       startTime: DateTime.parse(map['startTime']),
@@ -37,6 +41,7 @@ class Event {
 
   // copyWith 메서드 추가
   Event copyWith({
+    int? id,
     String? title,
     String? description,
     DateTime? startTime,
@@ -44,6 +49,7 @@ class Event {
     String? type,
   }) {
     return Event(
+      id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
       startTime: startTime ?? this.startTime,
@@ -57,6 +63,7 @@ class Event {
       identical(this, other) ||
       (other is Event &&
           runtimeType == other.runtimeType &&
+          id == other.id &&
           title == other.title &&
           description == other.description &&
           startTime == other.startTime &&
@@ -65,6 +72,7 @@ class Event {
 
   @override
   int get hashCode =>
+      id.hashCode ^
       title.hashCode ^
       description.hashCode ^
       startTime.hashCode ^

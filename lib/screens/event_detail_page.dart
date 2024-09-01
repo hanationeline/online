@@ -41,7 +41,7 @@ class EventDetailPage extends StatelessWidget {
                     context: context,
                     builder: (context) => AlertDialog(
                       title: const Text('삭제'),
-                      content: const Text('삭제 하시겠습니까?'),
+                      content: const Text('정말 삭제 하시겠습니까?'),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -69,23 +69,33 @@ class EventDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title 크기 더 크게
                 Text(
                   event.title,
                   style: const TextStyle(
-                    fontSize: 24.0,
+                    fontSize: 32.0, // 크기 더 키움
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8.0),
+                const SizedBox(height: 16.0), // 간격을 더 넓힘
+                // Start Time, End Time 회색 및 볼드 처리
                 Text(
                   'Start Time: ${DateFormat.jm().format(event.startTime)}',
-                  style: const TextStyle(fontSize: 16.0),
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey, // 회색 처리
+                  ),
                 ),
                 Text(
                   'End Time: ${DateFormat.jm().format(event.endTime)}',
-                  style: const TextStyle(fontSize: 16.0),
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey, // 회색 처리
+                  ),
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: 16.0), // Description과 시간 사이 간격
                 Text(
                   'Description:',
                   style: const TextStyle(
@@ -93,6 +103,7 @@ class EventDetailPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                const SizedBox(height: 8.0), // Description 아래 한 줄 띄움
                 Text(
                   event.description,
                   style: const TextStyle(fontSize: 16.0),

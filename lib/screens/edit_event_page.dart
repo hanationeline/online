@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oneline/models/event_model.dart';
+import 'package:intl/intl.dart';
 
 class EditEventPage extends StatefulWidget {
   final Event event;
@@ -13,6 +14,8 @@ class EditEventPage extends StatefulWidget {
 class _EditEventPageState extends State<EditEventPage> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
+  DateTime? _startTime;
+  DateTime? _endTime;
 
   @override
   void initState() {
@@ -20,6 +23,36 @@ class _EditEventPageState extends State<EditEventPage> {
     _titleController = TextEditingController(text: widget.event.title);
     _descriptionController =
         TextEditingController(text: widget.event.description);
+    _startTime = widget.event.startTime;
+    _endTime = widget.event.endTime;
+  }
+
+  Future<void> _selectDateTime(BuildContext context, bool isStart) async {
+    DateTime initialDate =
+        isStart ? (_startTime ?? DateTime.now()) : (_endTime ?? DateTime.now());
+    final DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+    if (date != null) {
+      final TimeOfDay? time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(initialDate),
+      );
+      if (time != null) {
+        setState(() {
+          final selectedDateTime =
+              DateTime(date.year, date.month, date.day, time.hour, time.minute);
+          if (isStart) {
+            _startTime = selectedDateTime;
+          } else {
+            _endTime = selectedDateTime;
+          }
+        });
+      }
+    }
   }
 
   @override
@@ -34,8 +67,11 @@ class _EditEventPageState extends State<EditEventPage> {
               final updatedEvent = widget.event.copyWith(
                 title: _titleController.text,
                 description: _descriptionController.text,
+                startTime: _startTime ?? widget.event.startTime,
+                endTime: _endTime ?? widget.event.endTime,
               );
-              Navigator.pop(context, updatedEvent); // Ensure this is called
+
+              Navigator.pop(context, updatedEvent);
             },
           ),
         ],
@@ -49,9 +85,45 @@ class _EditEventPageState extends State<EditEventPage> {
               controller: _titleController,
               decoration: const InputDecoration(labelText: 'Title'),
             ),
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Description'),
+            const SizedBox(height: 16.0),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => _selectDateTime(context, true),
+                    child: Text(
+                      _startTime == null
+                          ? 'Select Start Time'
+                          : 'Start: ${DateFormat('yyyy-MM-dd HH:mm').format(_startTime!)}',
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => _selectDateTime(context, false),
+                    child: Text(
+                      _endTime == null
+                          ? 'Select End Time'
+                          : 'End: ${DateFormat('yyyy-MM-dd HH:mm').format(_endTime!)}',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
+            Expanded(
+              child: TextFormField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                ),
+                maxLines: null,
+                expands: true,
+                textAlignVertical: TextAlignVertical.top,
+              ),
             ),
           ],
         ),
