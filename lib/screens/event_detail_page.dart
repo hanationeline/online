@@ -30,6 +30,7 @@ class EventDetailPage extends StatelessWidget {
                   if (updatedEvent != null && updatedEvent is Event) {
                     eventProvider.removeEvent(event);
                     eventProvider.addEvent(updatedEvent);
+                    Navigator.pop(context, updatedEvent);
                   }
                 },
               ),
@@ -39,15 +40,14 @@ class EventDetailPage extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('Confirm Deletion'),
-                      content: const Text(
-                          'Are you sure you want to delete this event?'),
+                      title: const Text('삭제'),
+                      content: const Text('삭제 하시겠습니까?'),
                       actions: [
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context); // Close the dialog
                           },
-                          child: const Text('Cancel'),
+                          child: const Text('취소'),
                         ),
                         TextButton(
                           onPressed: () {
@@ -55,7 +55,7 @@ class EventDetailPage extends StatelessWidget {
                             Navigator.pop(context); // Close the dialog
                             Navigator.pop(context); // Close the EventDetailPage
                           },
-                          child: const Text('Delete'),
+                          child: const Text('삭제'),
                         ),
                       ],
                     ),
