@@ -118,7 +118,7 @@ class _EoslListPageState extends State<EoslListPage> {
                         final eoslNo = row.cells['eosl_no']?.value ?? '';
                         final eoslModel = eoslProvider.getEoslByNo(eoslNo);
                         if (eoslModel != null) {
-                          context.go(
+                          context.push(
                               '/mainnavi/eosl_list/eosl_detail/${eoslModel.hostName}',
                               extra: eoslModel);
                         }

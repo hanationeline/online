@@ -345,7 +345,7 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
     final allTasks = <Map<String, dynamic>>[];
     for (var maintenance in matchingMaintenances) {
       allTasks.addAll(maintenance.tasks);
-      print("유지보수는 $maintenance");
+      // print("유지보수는 $maintenance");
     }
 
     setState(() {
@@ -355,10 +355,10 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
 
     // 유지보수 데이터 개수 확인 및 모든 항목 출력
     print('EoslDetailPage: 유지보수 데이터 개수: ${tasks.length}');
-    for (int i = 0; i < tasks.length; i++) {
-      final task = tasks[i];
-      print('EoslDetailPage: 유지보수 항목 $i: $task');
-    }
+    // for (int i = 0; i < tasks.length; i++) {
+    //   final task = tasks[i];
+    //   print('EoslDetailPage: 유지보수 항목 $i: $task');
+    // }
   }
 
   void _applyFilters() {
@@ -517,7 +517,7 @@ class _EoslDetailPageState extends State<EoslDetailPage> {
                     task: task, // TaskCard에 task 데이터 전달
                     onTap: () {
                       // 작업 상세보기 로직
-                      context.go(
+                      context.push(
                         '/mainnavi/eosl_list/eosl_detail/${widget.hostName}/history?taskIndex=${index - 1}',
                       );
                     },

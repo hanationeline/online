@@ -33,14 +33,36 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
   void initState() {
     super.initState();
     // 초기값 설정이나 상태 초기화 로직 추가 가능
+    // final eoslProvider = context.read<EoslProvider>();
+    // final eoslMaintenance =
+    //     eoslProvider.getEoslMaintenanceByHostName(widget.hostName);
+    // if (eoslMaintenance != null &&
+    //     widget.taskIndex < eoslMaintenance.tasks.length) {
+    //   final task = eoslMaintenance.tasks[widget.taskIndex];
+    //   taskController.text = task['content'] ?? '';
+    //   specialNotesController.text = task['notes'] ?? '';
+    // }
+    _loadData();
+  }
+
+  // 새로고침 시에도 데이터를 가져올 수 있도록 _loadData 메서드 추가
+  void _loadData() {
     final eoslProvider = context.read<EoslProvider>();
     final eoslMaintenance =
         eoslProvider.getEoslMaintenanceByHostName(widget.hostName);
+
+    // 유지보수 데이터가 있을 때만 설정
     if (eoslMaintenance != null &&
         widget.taskIndex < eoslMaintenance.tasks.length) {
       final task = eoslMaintenance.tasks[widget.taskIndex];
       taskController.text = task['content'] ?? '';
       specialNotesController.text = task['notes'] ?? '';
+    } else {
+      // 데이터가 없을 때 초기화
+      taskController.text = '';
+      specialNotesController.text = '';
+      print(
+          'EoslHistoryPage: 데이터 조회 실패 - 호스트 이름: ${widget.hostName}, 인덱스: ${widget.taskIndex}');
     }
   }
 
