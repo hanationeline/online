@@ -81,30 +81,13 @@ class EoslProvider with ChangeNotifier {
     final eoslDetailModel = eoslDetailList[hostName.trim().toLowerCase()];
 
     // 로그 추가: 현재 저장된 상세 정보 hostNames 확인
-    print('EoslProvider: 현재 저장된 상세 호스트네임들: ${eoslDetailList.keys}');
+    // print('EoslProvider: 현재 저장된 상세 호스트네임들: ${eoslDetailList.keys}');
 
     return eoslDetailModel;
   }
 
   // 모든 EOSL리스트 반환
   Map<String, EoslDetailModel> get getAllDetailEoslList => eoslDetailList;
-
-  // // 유지보수 이력 리스트 로드
-  // Future<void> getEoslMaintenanceList() async {
-  //   final eoslMaintenanceJsonData = await rootBundle
-  //       .loadString('lib/assets/eosl_maintenance_list.json'); // 유지보수 이력 데이터 파일
-  //   if (eoslMaintenanceJsonData.isNotEmpty) {
-  //     final List<dynamic> eoslMaintenanceDataList =
-  //         jsonDecode(eoslMaintenanceJsonData);
-  //     for (var maintenance in eoslMaintenanceDataList) {
-  //       final eoslMaintenanceModel = EoslMaintenance.fromJson(maintenance);
-  //       eoslMaintenanceList[eoslMaintenanceModel.hostName] =
-  //           eoslMaintenanceModel;
-  //     }
-  //     notifyListeners();
-  //   } else {
-  //     throw Error();
-  //   }
 
   // 유지보수 이력 리스트 로드
   Future<List<EoslMaintenance>> getEoslMaintenanceList() async {
@@ -151,5 +134,18 @@ class EoslProvider with ChangeNotifier {
       );
       notifyListeners(); // 데이터 변경 알림
     }
+  }
+
+  // 모든 유지보수 이력 리스트 반환
+  Map<String, EoslMaintenance> get getAllEoslMaintenanceList =>
+      eoslMaintenanceList;
+
+  // hostName으로 EOSL 유지보수 이력 조회
+  List<EoslMaintenance> getEoslMaintenanceListByHostName(String hostName) {
+    // 호스트 이름과 일치하는 모든 유지보수 항목을 필터링하여 반환
+    return eoslMaintenanceList.values.where((maintenance) {
+      return maintenance.hostName.trim().toLowerCase() ==
+          hostName.trim().toLowerCase();
+    }).toList();
   }
 }

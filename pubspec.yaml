@@ -51,6 +51,7 @@ dependencies:
   table_calendar: ^3.0.0
   pluto_grid: ^8.0.0
   file_picker: ^8.0.7
+  searchfield: ^1.0.9
 
 dev_dependencies:
   flutter_test:
