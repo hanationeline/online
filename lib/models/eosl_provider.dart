@@ -63,7 +63,6 @@ class EoslProvider with ChangeNotifier {
       for (var detail in eoslDetailDataList) {
         final eoslDetailModel = EoslDetailModel.fromJson(detail);
 
-        // 로그 추가: 상세 정보 로드 확인
         print(
             'EoslProvider - 로드된 EoslDetailModel 호스트네임: ${eoslDetailModel.hostName}');
 
@@ -80,7 +79,6 @@ class EoslProvider with ChangeNotifier {
   EoslDetailModel? getEoslDetailByHostName(String hostName) {
     final eoslDetailModel = eoslDetailList[hostName.trim().toLowerCase()];
 
-    // 로그 추가: 현재 저장된 상세 정보 hostNames 확인
     // print('EoslProvider: 현재 저장된 상세 호스트네임들: ${eoslDetailList.keys}');
 
     return eoslDetailModel;
@@ -124,7 +122,7 @@ class EoslProvider with ChangeNotifier {
     if (maintenance != null) {
       // 유지보수 이력이 존재하는 경우 Task 추가
       maintenance.tasks.add(task);
-      notifyListeners(); // 데이터 변경 알림
+      notifyListeners();
     } else {
       // 유지보수 이력이 존재하지 않으면 새로 생성
       eoslMaintenanceList[hostName.trim().toLowerCase()] = EoslMaintenance(
@@ -132,7 +130,7 @@ class EoslProvider with ChangeNotifier {
         hostName: hostName,
         tasks: [task],
       );
-      notifyListeners(); // 데이터 변경 알림
+      notifyListeners();
     }
   }
 

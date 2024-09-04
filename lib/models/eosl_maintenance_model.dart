@@ -2,7 +2,7 @@
 class EoslMaintenance {
   final String maintenanceNo;
   final String hostName;
-  final List<Map<String, dynamic>> tasks; // 작업 이력
+  final List<Map<String, dynamic>> tasks;
 
   EoslMaintenance({
     required this.maintenanceNo,
@@ -10,7 +10,6 @@ class EoslMaintenance {
     required this.tasks,
   });
 
-  // JSON 데이터를 EoslMaintenance 객체로 변환하는 메서드
   factory EoslMaintenance.fromJson(Map<String, dynamic> json) {
     return EoslMaintenance(
       maintenanceNo: json['eosl_maintenance_no'],
@@ -20,7 +19,6 @@ class EoslMaintenance {
     );
   }
 
-  // EoslMaintenance 객체를 JSON 형식으로 변환하는 메서드
   Map<String, dynamic> toJson() {
     return {
       'eosl_maintenance_no': maintenanceNo,

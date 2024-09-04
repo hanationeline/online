@@ -14,8 +14,6 @@ class EoslModel {
         ipAddress = json['ip_address'],
         platform = json['platform'],
         osVersion = json['os_version'],
-        // eoslDate =
-        //     json['eosl_date'] != null ? DateTime.parse(json['eoslDate']) : null;
         eoslDate = json['eosl_date'] != null && json['eosl_date'] is String
             ? DateTime.tryParse(json['eosl_date'])
             : null;

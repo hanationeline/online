@@ -61,7 +61,7 @@ class EoslInfoWidget extends StatelessWidget {
               color: Color.fromARGB(197, 0, 121, 107),
             ),
           ),
-          const SizedBox(width: 8), // key와 value 사이 간격 추가
+          const SizedBox(width: 8),
           Expanded(
             child: GestureDetector(
               onTap: () {
@@ -71,7 +71,7 @@ class EoslInfoWidget extends StatelessWidget {
                 supplier,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.blue, // 클릭 가능한 스타일
+                  color: Colors.blue,
                   decoration: TextDecoration.underline,
                 ),
                 overflow: TextOverflow.ellipsis,
@@ -98,7 +98,7 @@ class EoslInfoWidget extends StatelessWidget {
               color: Color.fromARGB(197, 0, 121, 107),
             ),
           ),
-          const SizedBox(width: 8), // key와 value 사이 간격 추가
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               eoslDetailModel.eoslDate != null
@@ -140,13 +140,13 @@ class EoslInfoWidget extends StatelessWidget {
               color: Color.fromARGB(197, 0, 121, 107),
             ),
           ),
-          const SizedBox(width: 8), // key와 value 사이 간격 추가
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               value,
               style: const TextStyle(fontSize: 16),
               overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.left, // 텍스트 왼쪽 정렬
+              textAlign: TextAlign.left,
             ),
           ),
         ],
