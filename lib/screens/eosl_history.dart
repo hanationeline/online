@@ -99,19 +99,18 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
 
     // EoslDetailModel의 supplier를 바탕으로 Contact 데이터 불러오기
     final contact = eoslDetail != null
-        ? context
-            .read<ContactProvider>()
-            .getContactByWorkplace(eoslDetail.supplier)
+        ? context.read<ContactProvider>()
+        // .getContactByWorkplace(eoslDetail.supplier)
         : null;
 
     // Contact용 임시 데이터 생성
-    final Contact tempContact = Contact(
-      name: '임시 데이터',
-      phone: '010-1234-5678',
-      email: 'temp@hanafn.com',
-      workplace: eoslDetail?.supplier ?? 'hanafn',
-      notes: '임시 연락처 데이터',
-    );
+    // final Contact tempContact = Contact(
+    //   name: '임시 데이터',
+    //   phone: '010-1234-5678',
+    //   email: 'temp@hanafn.com',
+    //   workplace: eoslDetail?.supplier ?? 'hanafn',
+    //   notes: '임시 연락처 데이터',
+    // );
 
     return Scaffold(
       appBar: AppBar(
@@ -161,13 +160,13 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
                                   minHeight: maxHeight,
                                   maxHeight: maxHeight,
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _buildContactTile(
-                                        context, contact ?? tempContact),
-                                  ],
-                                ),
+                                // child: Column(
+                                //   crossAxisAlignment: CrossAxisAlignment.start,
+                                //   children: [
+                                //     _buildContactTile(
+                                //         context, contact ?? tempContact),
+                                //   ],
+                                // ),
                               ),
                             ),
                           ],
@@ -234,29 +233,29 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
   }
 
   // Contact ListTile 생성 메서드
-  Widget _buildContactTile(BuildContext context, Contact contact) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
-          title: Text(
-            'Name: ${contact.name}',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Phone: ${contact.phone}'),
-              Text('Email: ${contact.email}'),
-              Text('Workplace: ${contact.workplace}'),
-              Text('Notes: ${contact.notes}'),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildContactTile(BuildContext context, Contact contact) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       ListTile(
+  //         contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
+  //         title: Text(
+  //           'Name: ${contact.name}',
+  //           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //         ),
+  //         subtitle: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Text('Phone: ${contact.phone}'),
+  //             Text('Email: ${contact.email}'),
+  //             Text('Workplace: ${contact.workplace}'),
+  //             Text('Notes: ${contact.notes}'),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   // 작업 정보 작성 섹션 생성 메서드
   Widget _buildTaskInformationSection() {
