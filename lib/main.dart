@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oneline/models/eosl_provider.dart';
 import 'package:oneline/router.dart';
 import 'package:provider/provider.dart';
-import 'package:oneline/models/event_provider.dart';
+import 'package:oneline/provider/event_provider.dart';
 import 'package:oneline/models/contact_provider.dart';
 import 'package:oneline/models/server_provider.dart'; // 추가
 

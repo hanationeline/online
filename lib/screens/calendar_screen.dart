@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // 날짜 나타날 때 쓰는 패키지 추가
+import 'package:intl/intl.dart'; // 날짜 포맷을 위해 추가
 import 'package:oneline/screens/add_event_page.dart';
+import 'package:oneline/screens/edit_event_page.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:provider/provider.dart';
-import 'package:oneline/models/event_provider.dart';
+import 'package:oneline/provider/event_provider.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -16,11 +17,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
   CalendarFormat calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
+  TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
-    _selectedDay = DateTime.now();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -28,6 +41,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calendar'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: EventSearchDelegate(),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -35,9 +59,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             firstDay: DateTime.utc(2020, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
             focusedDay: _focusedDay,
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
-            },
+            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
                 _selectedDay = selectedDay;
@@ -52,7 +74,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
             onPageChanged: (focusedDay) {
               _focusedDay = focusedDay;
             },
-            // 해당 일에 스케줄 있으면 초록색 표시하는 부분
             calendarBuilders: CalendarBuilders(
               markerBuilder: (context, day, events) {
                 if (events.isNotEmpty) {
@@ -81,7 +102,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
           const SizedBox(height: 8.0),
           Consumer<EventProvider>(
             builder: (context, eventProvider, child) {
-              final events = eventProvider.getEventsForDay(_selectedDay);
+              final events = eventProvider
+                  .getEventsForDay(_selectedDay)
+                  .where((event) =>
+                      _searchQuery.isEmpty ||
+                      event.title
+                          .toLowerCase()
+                          .contains(_searchQuery.toLowerCase()))
+                  .toList();
               String formattedDate =
                   DateFormat('yyyy-MM-dd').format(_selectedDay);
               return Container(
@@ -110,7 +138,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Expanded(
             child: Consumer<EventProvider>(
               builder: (context, eventProvider, child) {
-                final events = eventProvider.getEventsForDay(_selectedDay);
+                final events = eventProvider
+                    .getEventsForDay(_selectedDay)
+                    .where((event) =>
+                        _searchQuery.isEmpty ||
+                        event.title
+                            .toLowerCase()
+                            .contains(_searchQuery.toLowerCase()))
+                    .toList();
                 return ListView.builder(
                   itemCount: events.length,
                   itemBuilder: (context, index) {
@@ -134,6 +169,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           subtitle: Text(
                             '${event.startTime.hour}:${event.startTime.minute.toString().padLeft(2, '0')} - ${event.endTime.hour}:${event.endTime.minute.toString().padLeft(2, '0')}',
                           ),
+                          trailing: IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              eventProvider.removeEvent(event);
+                            },
+                          ),
+                          onTap: () async {
+                            final updatedEvent = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EditEventPage(event: event),
+                              ),
+                            );
+
+                            if (updatedEvent != null) {
+                              eventProvider.updateEvent(updatedEvent);
+                            }
+                          },
                         ),
                       ),
                     );
@@ -153,6 +210,80 @@ class _CalendarScreenState extends State<CalendarScreen> {
         },
         child: const Icon(Icons.add),
       ),
+    );
+  }
+}
+
+class EventSearchDelegate extends SearchDelegate<String> {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final eventProvider = Provider.of<EventProvider>(context, listen: false);
+    final results = eventProvider.getAllEvents().where((event) {
+      return event.title.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        final event = results[index];
+        return ListTile(
+          title: Text(event.title),
+          subtitle: Text(
+            '${event.startTime.hour}:${event.startTime.minute.toString().padLeft(2, '0')} - ${event.endTime.hour}:${event.endTime.minute.toString().padLeft(2, '0')}',
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditEventPage(event: event),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final eventProvider = Provider.of<EventProvider>(context, listen: false);
+    final suggestions = eventProvider.getAllEvents().where((event) {
+      return event.title.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final event = suggestions[index];
+        return ListTile(
+          title: Text(event.title),
+          onTap: () {
+            close(context, event.title);
+          },
+        );
+      },
     );
   }
 }

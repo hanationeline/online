@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:oneline/models/event_provider.dart';
+import 'package:oneline/provider/event_provider.dart';
 import 'package:oneline/models/event_model.dart';
 
 class AddEventPage extends StatefulWidget {
@@ -12,6 +12,7 @@ class AddEventPage extends StatefulWidget {
 
 class _AddEventPageState extends State<AddEventPage> {
   final _formKey = GlobalKey<FormState>();
+  int _id = 3;
   late String _title;
   late String _description;
   DateTime? _startTime;
@@ -71,12 +72,6 @@ class _AddEventPageState extends State<AddEventPage> {
                   _title = value!;
                 },
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Description'),
-                onSaved: (value) {
-                  _description = value!;
-                },
-              ),
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(labelText: 'Type'),
                 value: _type,
@@ -117,11 +112,30 @@ class _AddEventPageState extends State<AddEventPage> {
                   ),
                 ],
               ),
+              const SizedBox(height: 8.0),
+              Expanded(
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Description',
+                    border: OutlineInputBorder(), // 테두리 추가
+                    floatingLabelBehavior:
+                        FloatingLabelBehavior.always, // 레이블을 항상 위에 고정
+                  ),
+                  maxLines: null, // 여러 줄 입력 가능
+                  expands: true, // TextFormField가 남는 공간을 모두 채움
+                  textAlignVertical: TextAlignVertical.top, // 입력 내용이 상단에서 시작
+                  onSaved: (value) {
+                    _description = value!;
+                  },
+                ),
+              ),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
+                    _id++;
                     final newEvent = Event(
+                      id: _id,
                       title: _title,
                       description: _description,
                       startTime: _startTime ?? DateTime.now(),

@@ -12,73 +12,137 @@ class AddContactPage extends StatefulWidget {
 
 class _AddContactPageState extends State<AddContactPage> {
   final _formKey = GlobalKey<FormState>();
-  late String _name;
-  late String _phone;
-  late String _email;
-  late String _workplace; // 20240716_김재영 : 연락처 내 직장정보 추가
-  late String _notes; // 20240716_김재영 : 연락처 내 메모 추가
+  final _nameController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
+  final _faxNumberController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _organizationController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _roleController = TextEditingController();
+  final _memoController = TextEditingController();
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      final newContact = Contact(
+        name: _nameController.text,
+        phoneNumber: _phoneNumberController.text,
+        faxNumber: _faxNumberController.text,
+        email: _emailController.text,
+        address: _addressController.text,
+        organization: _organizationController.text,
+        title: _titleController.text,
+        role: _roleController.text,
+        memo: _memoController.text,
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now(),
+      );
+
+      Provider.of<ContactProvider>(context, listen: false)
+          .addContact(newContact);
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Contact'),
+        title: const Text('연락처 추가'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: [
               TextFormField(
+                controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
-                onSaved: (value) {
-                  _name = value!;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Phone'),
-                onSaved: (value) {
-                  _phone = value!;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Email'),
-                onSaved: (value) {
-                  _email = value!;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Workplace'), // 20240716_김재영 : 연락처 내 직장정보 추가
-                onSaved: (value) {
-                  _workplace = value!;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Notes'), // 20240716_김재영 : 연락처 내 메모 추가
-                onSaved: (value) {
-                  _notes = value!;
-                },
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    final newContact = Contact(
-                      name: _name,
-                      phone: _phone,
-                      email: _email,
-                      workplace: _workplace, // 20240716_김재영 : 연락처 내 직장정보 추가
-                      notes: _notes, // 20240716_김재영 : 연락처 내 메모 추가
-                    );
-                    Provider.of<ContactProvider>(context, listen: false)
-                        .addContact(
-                            newContact); // 20240716_김재영 : ContactProvider 구현
-                    Navigator.pop(context);
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a name';
                   }
+                  return null;
                 },
+              ),
+              TextFormField(
+                controller: _phoneNumberController,
+                decoration: const InputDecoration(labelText: 'Phone Number'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a phone number';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _faxNumberController,
+                decoration: const InputDecoration(labelText: 'Fax Number'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a fax number';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter an email';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _addressController,
+                decoration: const InputDecoration(labelText: 'Address'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter an address';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _organizationController,
+                decoration: const InputDecoration(labelText: 'Organization'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter an organization';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _titleController,
+                decoration: const InputDecoration(labelText: 'Title'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a title';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _roleController,
+                decoration: const InputDecoration(labelText: 'Role'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a role';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _memoController,
+                decoration: const InputDecoration(labelText: 'Memo'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _submitForm,
                 child: const Text('Add Contact'),
               ),
             ],

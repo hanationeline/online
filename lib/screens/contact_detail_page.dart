@@ -4,7 +4,7 @@ import 'package:oneline/models/contact_model.dart';
 class ContactDetailPage extends StatelessWidget {
   final Contact contact;
 
-  const ContactDetailPage({required this.contact, super.key});
+  const ContactDetailPage({super.key, required this.contact});
 
   @override
   Widget build(BuildContext context) {
@@ -14,32 +14,47 @@ class ContactDetailPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
-            Text(
-              'Name: ${contact.name}',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ListTile(
+              title: const Text('Phone Number'),
+              subtitle: Text(contact.phoneNumber),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Phone: ${contact.phone}',
-              style: const TextStyle(fontSize: 18),
+            ListTile(
+              title: const Text('Fax Number'),
+              subtitle: Text(contact.faxNumber),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Email: ${contact.email}',
-              style: const TextStyle(fontSize: 18),
+            ListTile(
+              title: const Text('Email'),
+              subtitle: Text(contact.email),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Workplace: ${contact.workplace}', // 20240716_김재영 : 연락처 내 직장정보 추가
-              style: const TextStyle(fontSize: 18),
+            ListTile(
+              title: const Text('Address'),
+              subtitle: Text(contact.address),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Notes: ${contact.notes}', // 20240716_김재영 : 연락처 내 메모 추가
-              style: const TextStyle(fontSize: 18),
+            ListTile(
+              title: const Text('Organization'),
+              subtitle: Text(contact.organization),
+            ),
+            ListTile(
+              title: const Text('Title'),
+              subtitle: Text(contact.title),
+            ),
+            ListTile(
+              title: const Text('Role'),
+              subtitle: Text(contact.role),
+            ),
+            ListTile(
+              title: const Text('Memo'),
+              subtitle: Text(contact.memo),
+            ),
+            ListTile(
+              title: const Text('Created At'),
+              subtitle: Text(contact.createdAt.toString()),
+            ),
+            ListTile(
+              title: const Text('Modified At'),
+              subtitle: Text(contact.modifiedAt.toString()),
             ),
           ],
         ),
