@@ -32,22 +32,18 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
   @override
   void initState() {
     super.initState();
-    // 초기값 설정이나 상태 초기화 로직 추가 가능
-    // final eoslProvider = context.read<EoslProvider>();
-    // final eoslMaintenance =
-    //     eoslProvider.getEoslMaintenanceByHostName(widget.hostName);
-    // if (eoslMaintenance != null &&
-    //     widget.taskIndex < eoslMaintenance.tasks.length) {
-    //   final task = eoslMaintenance.tasks[widget.taskIndex];
-    //   taskController.text = task['content'] ?? '';
-    //   specialNotesController.text = task['notes'] ?? '';
-    // }
     _loadData();
   }
 
-  // 새로고침 시에도 데이터를 가져올 수 있도록 _loadData 메서드 추가
-  void _loadData() {
+  // 데이터 로드
+  Future<void> _loadData() async {
     final eoslProvider = context.read<EoslProvider>();
+
+    // 데이터가 없는 경우 로드
+    await eoslProvider.getEoslList();
+    await eoslProvider.getEoslDetailList();
+    await eoslProvider.getEoslMaintenanceList(); // 유지보수 이력 로드
+
     final eoslMaintenance =
         eoslProvider.getEoslMaintenanceByHostName(widget.hostName);
 
@@ -108,13 +104,13 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
             .getContactByWorkplace(eoslDetail.supplier)
         : null;
 
-    // Contact 데이터가 없을 경우 임시 데이터 생성
+    // Contact용 임시 데이터 생성
     final Contact tempContact = Contact(
       name: '임시 데이터',
       phone: '010-1234-5678',
-      email: 'temp@company.com',
-      workplace: eoslDetail?.supplier ?? 'Unknown',
-      notes: 'This is a temporary contact record.',
+      email: 'temp@hanafn.com',
+      workplace: eoslDetail?.supplier ?? 'hanafn',
+      notes: '임시 연락처 데이터',
     );
 
     return Scaffold(
@@ -123,18 +119,15 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
         backgroundColor: Colors.teal,
       ),
       body: eoslDetail == null
-          ? const Center(child: Text('데이터를 불러오는 중 오류가 발생했습니다.'))
+          ? const Center(child: Text('데이터를 불러오는 중 오류가 발생'))
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // EoslDetailModel과 Contact를 한 row에 나란히 배치
-                  // Row 위젯 안의 내용 수정
                   Expanded(
                     child: LayoutBuilder(
                       builder: (context, constraints) {
-                        // 원하는 높이를 지정, 예를 들어 300으로 제한
                         const double maxHeight = 200; // 최대 높이 설정
 
                         return Row(
@@ -269,7 +262,7 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
   Widget _buildTaskInformationSection() {
     return Container(
       width: double.infinity,
-      height: 400, // 높이 증가
+      height: 400,
       padding: const EdgeInsets.all(16),
       decoration: _boxDecoration(),
       child: SingleChildScrollView(
@@ -283,7 +276,7 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
-                // 읽기 모드에서 수정 버튼 제공
+                // 읽기 모드에서 수정 버튼
                 if (!isEditing)
                   IconButton(
                     icon: const Icon(Icons.edit),
@@ -297,7 +290,7 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
             ),
             const SizedBox(height: 10),
             if (isEditing)
-              // 수정 모드에서 텍스트 필드 제공
+              // 수정 모드에서 텍스트 필드
               TextField(
                 controller: taskController,
                 maxLines: null,
@@ -307,10 +300,10 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
                 ),
               )
             else
-              const Text('작업 내용: 점검 내용 및 특이사항 작성'), // 기본 내용 표시
+              const Text('작업 내용: 점검 내용 및 특이사항 작성'), // default 내용
             const SizedBox(height: 8),
             if (isEditing)
-              // 수정 모드에서 특이사항 필드 제공
+              // 수정 모드에서 특이사항 필드
               TextField(
                 controller: specialNotesController,
                 maxLines: null,
@@ -357,7 +350,7 @@ class _EoslHistoryPageState extends State<EoslHistoryPage> {
           ...attachedFiles.map(
             (file) => ListTile(
               leading: const Icon(Icons.insert_drive_file),
-              title: Text('파일명: ${file.name ?? '알 수 없음'}'), // 파일명이 null인지 확인
+              title: Text('파일명: ${file.name ?? '알 수 없음'}'),
               subtitle: Text(
                   '용량: ${(file.size != null ? (file.size / 1024).toStringAsFixed(2) : '0.00')} KB'), // 파일 크기가 null인지 확인
               trailing: IconButton(

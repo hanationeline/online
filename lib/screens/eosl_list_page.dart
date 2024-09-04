@@ -7,6 +7,8 @@ import 'package:oneline/widgets/animated_search_bar.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 
+// TODO: 페이지 이동 시 플루토 표가 다중으로 생기는 것 수정 필요
+
 class EoslListPage extends StatefulWidget {
   const EoslListPage({super.key});
 
